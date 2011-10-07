@@ -35,12 +35,13 @@ class PHOSRawAnalysis
   const static int kNTRURows = 4;
   const static int kNBranches = 2;
 
-  static int Get2x2Max(AliPHOSModuleReader* reader, int mod, int xIdx, int zIdx, int& maxIsAtTime);
+  static int Get2x2Signal(AliPHOSEMCReader* reader, int mod, int xIdx, int zIdx, int& maxIsAtTime);
+  static int Get2x2Max(AliPHOSEMCReader* reader, int mod, int xIdx, int zIdx, int& maxIsAtTime);
   static int Get2x2Max(AliPHOSTRUReader* reader, int mod, int xIdx, int zIdx, int& maxIsAtTime);
-  static int Get4x4Max(AliPHOSModuleReader* reader, int mod, int TRURow, int branch, int xIdx, int zIdx, int& maxIsAtTime);
-  static int Get4x4Max(AliPHOSTRUReader* reader, int mod, int TRURow, int branch, int xIdx, int zIdx, int& maxIsAtTime);
-  static bool Is2x2Saturated(AliPHOSModuleReader* reader, int mod, int xIdx, int zIdx, int satThreshold);
-  static bool Is4x4Saturated(AliPHOSModuleReader* reader, int mod, int TRURow, int branch, int xIdx, int zIdx, int satThreshold);
+  static int Get4x4Max(AliPHOSEMCReader* reader, int mod, int TORRow, int branch, int xIdx, int zIdx, int& maxIsAtTime);
+  static int Get4x4Max(AliPHOSTRUReader* reader, int mod, int TORRow, int branch, int xIdx, int zIdx, int& maxIsAtTime);
+  static bool Is2x2Saturated(AliPHOSEMCReader* reader, int mod, int xIdx, int zIdx, int satThreshold);
+  static bool Is4x4Saturated(AliPHOSEMCReader* reader, int mod, int TORRow, int branch, int xIdx, int zIdx, int satThreshold);
 };
 
 #endif

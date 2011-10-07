@@ -89,6 +89,32 @@ void AliPHOSTriggerAnalysis::ProcessEvent(AliPHOSRawReader* rawReader)
   } // end mod loop
 }
 
+
+int AliPHOSTriggerAnalysis::Get2x2Signal(AliPHOSModuleReader* reader, int mod, int xIdx, int zIdx);
+{
+  const int signal
+    = reader->GetSignal(mod, xIdx*2  , zIdx*2  , timeBin)
+    + reader->GetSignal(mod, xIdx*2+1, zIdx*2  , timeBin)
+    + reader->GetSignal(mod, xIdx*2  , zIdx*2+1, timeBin)
+    + reader->GetSignal(mod, xIdx*2+1, zIdx*2+1, timeBin);
+  return signal;
+}
+
+
+int AliPHOSTriggerAnalysis::Get2x2Max(AliPHOSEMCReader* reader, int mod, int xIdx, int zIdx, int& maxIsAtTime)
+{
+  int max = 0;
+  for(int timeBin = 0; timeBin < kNTimeBins; ++timeBin) {
+    const int signal = Get2x2Signal(reader, mod, xIdx, zIdx);
+    if( max < signal ){
+      max = signal;
+      maxIsAtTime = timeBin;
+    }
+  }
+  return max;
+}
+
+
 int AliPHOSTriggerAnalysis::Get2x2Max(AliPHOSTRUReader* reader, int mod, int xIdx, int zIdx, int& maxIsAtTime)
 {
   const int RCURow = xIdx / kNTRURows;
@@ -105,40 +131,6 @@ int AliPHOSTriggerAnalysis::Get2x2Max(AliPHOSTRUReader* reader, int mod, int xId
     }
   }
   return max;
-}
-
-
-
-int AliPHOSTriggerAnalysis::Get2x2Max(AliPHOSEMCReader* reader, int mod, int xIdx, int zIdx, int& maxIsAtTime)
-{
-  int max = 0;
-  for(int timeBin = 0; timeBin < kNTimeBins; ++timeBin) {
-    const int signal
-      = reader->GetSignal(mod, xIdx*2  , zIdx*2  , timeBin)
-      + reader->GetSignal(mod, xIdx*2+1, zIdx*2  , timeBin)
-      + reader->GetSignal(mod, xIdx*2  , zIdx*2+1, timeBin)
-      + reader->GetSignal(mod, xIdx*2+1, zIdx*2+1, timeBin);
-    if( max < signal ){
-      max = signal;
-      maxIsAtTime = timeBin;
-    }
-  }
-  return max;
-}
-
-
-bool AliPHOSTriggerAnalysis::Is2x2Saturated(AliPHOSEMCReader* reader, int mod, int xIdx, int zIdx, int satThreshold)
-{
-  for(int timeBin = 0; timeBin < kNTimeBins; ++timeBin) {
-    // if any of the 4 signal above threshold:
-    if( satThreshold <= reader->GetSignal(mod, xIdx*2  , zIdx*2  , timeBin) ||
-	satThreshold <= reader->GetSignal(mod, xIdx*2+1, zIdx*2  , timeBin) ||
-	satThreshold <= reader->GetSignal(mod, xIdx*2  , zIdx*2+1, timeBin) ||
-	satThreshold <= reader->GetSignal(mod, xIdx*2+1, zIdx*2+1, timeBin)    )
-      return true; // signal is saturated
-  }
-  // else signal is not saturated
-  return false:
 }
 
 
@@ -162,19 +154,37 @@ int AliPHOSTriggerAnalysis::Get4x4Max(AliPHOSTRUReader* reader, int mod, int TRU
 
 int AliPHOSTriggerAnalysis::Get4x4Max(AliPHOSEMCReader* reader, int mod, int TRURow, int branch, int xIdx, int zIdx, int& maxIsAtTime)
 {
+  int modX = xIdx + TRURow * (AliPHOSGeometry::GetInstance()->GetNPhi() / kNTRURows);
+  int modZ = zIdx + branch * (AliPHOSGeometry::GetInstance()->GetNZ() / kNBranches);
+
   int max = 0;
   for(int timeBin = 0; timeBin < kNTimeBins; ++timeBin) {
     const int signal 
-      = Get2x2Signal(AliPHOSTRUReader* reader, mod, RCURow, branch, xIdx  , zIdx  , timeBin)
-      + Get2x2Signal(AliPHOSTRUReader* reader, mod, RCURow, branch, xIdx+1, zIdx  , timeBin)
-      + Get2x2Signal(AliPHOSTRUReader* reader, mod, RCURow, branch, xIdx  , zIdx+1, timeBin)
-      + Get2x2Signal(AliPHOSTRUReader* reader, mod, RCURow, branch, xIdx+1, zIdx+1, timeBin);
+      = Get2x2Signal(reader, branch, modX  , modZ  , timeBin)
+      + Get2x2Signal(reader, branch, modX+1, modZ  , timeBin)
+      + Get2x2Signal(reader, branch, modX  , modZ+1, timeBin)
+      + Get2x2Signal(reader, branch, modX+1, modZ+1, timeBin);
     if( max < signal ){
       max = signal;
       maxIsAtTime = timeBin;
     }
   }
   return max;
+}
+
+
+bool AliPHOSTriggerAnalysis::Is2x2Saturated(AliPHOSEMCReader* reader, int mod, int xIdx, int zIdx, int satThreshold)
+{
+  for(int timeBin = 0; timeBin < kNTimeBins; ++timeBin) {
+    // if any of the 4 signal above threshold:
+    if( satThreshold <= reader->GetSignal(mod, xIdx*2  , zIdx*2  , timeBin) ||
+	satThreshold <= reader->GetSignal(mod, xIdx*2+1, zIdx*2  , timeBin) ||
+	satThreshold <= reader->GetSignal(mod, xIdx*2  , zIdx*2+1, timeBin) ||
+	satThreshold <= reader->GetSignal(mod, xIdx*2+1, zIdx*2+1, timeBin)    )
+      return true; // signal is saturated
+  }
+  // else signal is not saturated
+  return false:
 }
 
 
