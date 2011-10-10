@@ -124,7 +124,7 @@ int AliPHOSTriggerAnalysis::Get2x2Max(AliPHOSTRUReader* reader, int mod, int xId
   
   int max = 0;
   for(int timeBin = 0; timeBin < kNTimeBins; ++timeBin) {
-    const int signal = reader->Get2x2Signal(AliPHOSTRUReader* reader, mod, RCURow, branch, RCUX, RCUZ, timeBin);
+    const int signal = reader->GetTRURegion(mod, RCURow, branch)->Get2x2SignalSum( RCUX, RCUZ, timeBin);
     if( max < signal ){
       max = signal;
       maxIsAtTime = timeBin;
@@ -139,10 +139,10 @@ int AliPHOSTriggerAnalysis::Get4x4Max(AliPHOSTRUReader* reader, int mod, int TRU
   int max = 0;
   for(int timeBin = 0; timeBin < kNTimeBins; ++timeBin) {
     const int signal 
-      = reader->Get2x2Signal(AliPHOSTRUReader* reader, mod, RCURow, branch, xIdx  , zIdx  , timeBin)
-      + reader->Get2x2Signal(AliPHOSTRUReader* reader, mod, RCURow, branch, xIdx+1, zIdx  , timeBin)
-      + reader->Get2x2Signal(AliPHOSTRUReader* reader, mod, RCURow, branch, xIdx  , zIdx+1, timeBin)
-      + reader->Get2x2Signal(AliPHOSTRUReader* reader, mod, RCURow, branch, xIdx+1, zIdx+1, timeBin);
+      = reader->GetTRURegion(mod, RCURow, branch)->Get2x2SignalSum(xIdx  , zIdx  , timeBin)
+      + reader->GetTRURegion(mod, RCURow, branch)->Get2x2SignalSum(xIdx+1, zIdx  , timeBin)
+      + reader->GetTRURegion(mod, RCURow, branch)->Get2x2SignalSum(xIdx  , zIdx+1, timeBin)
+      + reader->GetTRURegion(mod, RCURow, branch)->Get2x2SignalSum(xIdx+1, zIdx+1, timeBin);
     if( max < signal ){
       max = signal;
       maxIsAtTime = timeBin;
