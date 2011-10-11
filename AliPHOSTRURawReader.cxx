@@ -1,32 +1,33 @@
 #include "AliPHOSTRURawReader.h"
 
+#include "AliCaloRawStreamV3.h"
 #include "AliPHOSTRURegionRawReader.h"
+#include "AliPHOSGeometry.h"
 
 
 AliPHOSTRURawReader::AliPHOSTRURawReader()
-  : fRegions(0)
+  : fRegions()
 {
-  int nMod = AliPHOSGeometry::GetInstance()->GetNModules();
+  const int nMod = AliPHOSGeometry::GetInstance()->GetNModules();
   
   vector<AliPHOSTRURegionRawReader*> sBranches(kNBranches, NULL);
-  vector<vector<Short_t>> sRows(kNTRURows, sBranches);
-  fRegions = <vector<vector<Short_t>>>(nMod, sRows);
+  vector<vector<AliPHOSTRURegionRawReader*> > sRows(kNTRURows, sBranches);
+  fRegions = vector<vector<vector<AliPHOSTRURegionRawReader*> > >(nMod, sRows);
 }
     
     
 AliPHOSTRURawReader::~AliPHOSTRURawReader()
 {
-  int nMod = AliPHOSGeometry::GetInstance()->GetNModules();
+  const int nMod = AliPHOSGeometry::GetInstance()->GetNModules();
 
   for(int mod = 0; mod < nMod; ++mod)
     for(int row = 0; row < kNTRURows; ++row)
       for(int branch = 0; branch < kNBranches; branch++)
 	delete fRegions[mod][row][branch];
-      
 }
  
 
-AliPHOSTRURawReader::GetTRURegion(int mod, int truRow, int branch)
+AliPHOSTRURegionRawReader* AliPHOSTRURawReader::GetTRURegion(int mod, int truRow, int branch)
 {
   if( ! fRegions[mod][truRow][branch] )
     fRegions[mod][truRow][branch] = new AliPHOSTRURegionRawReader();
@@ -37,9 +38,9 @@ AliPHOSTRURawReader::GetTRURegion(int mod, int truRow, int branch)
 void AliPHOSTRURawReader::ReadFromStream(AliCaloRawStreamV3* rawStream)
 {
   while (rawStream->NextBunch()) {
-    Int_t module = stream->GetModule();
-    Int_t rcuRow = stream->GetRow();
-    Int_t branch = 1 - stream->GetBranch(); // !!! Found this to be necessary, -Henrik Qvigstad <henrik.qvigstad@cern.ch>
+    Int_t module = rawStream->GetModule();
+    Int_t rcuRow = rawStream->GetRow();
+    Int_t branch = 1 - rawStream->GetBranch(); // !!! Found this to be necessary, -Henrik Qvigstad <henrik.qvigstad@cern.ch>
     
     GetTRURegion(module, rcuRow, branch)->ReadFromStream(rawStream);
   } // end while 
@@ -47,8 +48,10 @@ void AliPHOSTRURawReader::ReadFromStream(AliCaloRawStreamV3* rawStream)
 
 void AliPHOSTRURawReader::Reset()
 {
+  const int nMod = AliPHOSGeometry::GetInstance()->GetNModules();
+  
   for(int mod = 0; mod < nMod; ++mod)
-    for(int row = 0; row < kNTRURows; ++row)
+    for(int truRow = 0; truRow < kNTRURows; ++truRow)
       for(int branch = 0; branch < kNBranches; branch++)
 	if( fRegions[mod][truRow][branch] )
 	  fRegions[mod][truRow][branch]->Reset();

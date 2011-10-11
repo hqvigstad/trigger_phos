@@ -80,8 +80,8 @@ void AliPHOSTRURegionRawReader::Reset()
 	  fFlags[xIdx][zIdx][timeBin] = false;
 	} // zIdx
       } // xIdx
-      fActiveTime[timeBin] = false;
     }// end if fActiveTime
+    fActiveTime[timeBin] = false;
   } // timeBin
   
   fActive = false;
