@@ -1,17 +1,30 @@
-#include "AliPHOSRawAnalysis.h"
+#include "AliPHOSTriggerAnalysis.h"
+#include "AliPHOSRawReader.h"
+#include "AliCentralTrigger.h"
+
+#include "TChain.h"
+#include "TString.h"
+#include "AliRawReaderChain.h"
+#include "AliCaloRawStreamV3.h"
+#include "AliLog.h"
+#include "AliTriggerClass.h"
+#include "AliTriggerConfiguration.h"
+#include "AliCDBManager.h"
+#include "TMath.h"
 
 #include <iostream>
+#include <fstream>
 using namespace std;
 
 void analyseRawChain(TChain* );
-void addFilesToChain(string fileName, TChain* );
+void addFilesToChain(const TString fileName, TChain* );
 TString GetTriggerClass(AliRawReaderChain* );
 
 
-void phosRawAnalysis(string rawFileList = "files.txt";)
-{				
-  TChain *rawChain = new TChain("rawChain");
-  addFilesToChain(const string rawFileList, rawChain );
+void phosTriggerAnalysis(TString rawFileList = "files.txt")
+{
+  TChain *rawChain = new TChain("RAW");
+  addFilesToChain(rawFileList, rawChain );
   
   analyseRawChain(rawChain);
 }
@@ -21,39 +34,37 @@ void phosRawAnalysis(string rawFileList = "files.txt";)
 // A macro that takes a chain of raw files and does the analysis of its PHOS raw Stream
 void analyseRawChain(TChain* chain)
 {
-  // Create the analysis objects
-  AliPHOSRawAnalysis* rawAnalysisCINT7 = 
-    new AliPHOSRawAnalysis("rawAnalysisCINT7", "Analysis of raw CINT7 events");
-  rawAnalysisCINT7->SetVerbose(1);
-  rawAnalysisCINT7->PlotEventSpecifics(false);
+  AliCDBManager::Instance()->SetDefaultStorage("raw://");
 
-  AliPHOSRawAnalysis* rawAnalysisCPHI7 = 
-    new AliPHOSRawAnalysis("rawAnalysisCPHI7", "Analysis of raw CPHI7 events");
-  rawAnalysisCPHI7->SetVerbose(1);
-  rawAnalysisCPHI7->PlotEventSpecifics(false);
+  // Create the analysis objects
+  AliPHOSTriggerAnalysis* rawAnalysisCINT7 = 
+    new AliPHOSTriggerAnalysis();
+
+  AliPHOSTriggerAnalysis* rawAnalysisCPHI7 = 
+    new AliPHOSTriggerAnalysis();
 
 
   // Create an AliPHOSRawReader to read the stream
   AliPHOSRawReader* phosRawReader = new AliPHOSRawReader;
-  phosRawReader->SetVerbose(1);
+
 
   // Prepare and loop over the chain
   AliRawReaderChain* rawChain = new AliRawReaderChain(chain);
-  rawAnalysis->Process(rawChain);
-  rawReaderChain->Reset();
+  rawChain->Reset();
   AliCaloRawStreamV3* phosRawStream = new AliCaloRawStreamV3(rawChain,"PHOS");
-  Int_t runNumber = -1;
+  UInt_t runNumber = -1;
   Int_t event_count = 0;
   while (rawChain->NextEvent()) {
     std::cout << "\revent: " << event_count++ << "  "<< flush;
-    if( rawReaderChain->GetRunNumber() != runNumber ){
-      runNumber = rawReaderChain->GetRunNumber() 
+    if( rawChain->GetRunNumber() != runNumber ){
+      runNumber = rawChain->GetRunNumber();
+      AliCDBManager::Instance()->SetRun(runNumber);
       Printf("New run number, current run number is: %d", runNumber);
     }
     
     TString triggers = GetTriggerClass(rawChain);
     if(triggers.Contains("CINT7") || triggers.Contains("CPHI7")){
-      phosRawReader->ReadEvent( phosRawStream );
+      phosRawReader->ReadFromStream( phosRawStream );
       
       if( triggers.Contains("CINT7") )
 	rawAnalysisCINT7->ProcessEvent(phosRawReader);
@@ -62,28 +73,27 @@ void analyseRawChain(TChain* chain)
     }
   }
   
-  delete rawStream;
-  delete phosRawReader
+  delete phosRawStream;
+  delete phosRawReader;
   
-  rawAnalysis->SaveResults("rawResults.root");
+  rawAnalysisCINT7->SaveResults("rawResultsCINT7.root");
+  rawAnalysisCPHI7->SaveResults("rawResultsCPHI7.root");
 }
 
 
 
-void addFilesToChain(string rawFileList, TChain* chain)
+void addFilesToChain(const TString rawFileList, TChain* chain)
 {
   ifstream inList;
-  inList.open( rawFileList.c_str() );
+  inList.open( rawFileList.Data() );
   char rawFile[256];
   while( inList.good() ) {
     inList >> rawFile;
     if (rawFile[0] == '!') continue;
    printf("Add file %s to chain\n",rawFile);
-   rawChain->Add(rawFile);
+   chain->Add(rawFile);
  }
   inList.close();
-
-  analyseRawChain(rawChain);
 }
 
 
@@ -107,7 +117,7 @@ TString GetTriggerClass(AliRawReaderChain* rawChain)
     AliTriggerClass* trclass = (AliTriggerClass*)classesArray.At(iclass);
     if (trclass && trclass->GetMask()>0) {
       Int_t trindex = TMath::Nint(TMath::Log2(trclass->GetMask()));
-      reader->LoadTriggerClass(trclass->GetName(),trindex);
+      rawChain->LoadTriggerClass(trclass->GetName(),trindex);
       if (triggerMask & (1ull << trindex)) {
 	trclasses += " ";
 	trclasses += trclass->GetName();

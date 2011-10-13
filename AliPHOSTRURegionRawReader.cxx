@@ -8,6 +8,38 @@
 #include <vector>
 using namespace std;
 
+
+AliPHOSTRURegionRawReader::AliPHOSTRURegionRawReader()
+  : fSignals(),
+    fFlags(), 
+    fActive(false),
+    fActiveTime(kDefaultNTimeBins, false)
+{
+  if( ! AliPHOSGeometry::GetInstance() )
+    AliPHOSGeometry::GetInstance("PHOS", "PHOS");
+  
+  const int n2x2X = AliPHOSGeometry::GetInstance()->GetNPhi() /2;
+  const int n2x2Z = AliPHOSGeometry::GetInstance()->GetNZ() /2;
+  const int n2x2XprTRURow = n2x2X /kNTRURows;
+  const int n2x2ZprBranch = n2x2Z /kNBranches;
+  const int n4x4XprTRURow = n2x2XprTRURow -1;
+  const int n4x4ZprBranch = n2x2ZprBranch -1;
+
+
+  // fSignals:
+  vector<Short_t> sTime(kDefaultNTimeBins, 0);
+  vector<vector<Short_t> > sZ(n2x2ZprBranch, sTime);
+  fSignals = vector<vector<vector<Short_t> > >(n2x2XprTRURow, sZ);
+
+  // fFlags()
+  vector<Bool_t> bTime(kDefaultNTimeBins, 0);
+  vector<vector<Bool_t> > bZ(n4x4ZprBranch, bTime);
+  fFlags = vector<vector<vector<Bool_t> > >(n4x4XprTRURow, bZ);
+
+}
+AliPHOSTRURegionRawReader::~AliPHOSTRURegionRawReader()
+{}
+
 void AliPHOSTRURegionRawReader::ReadFromStream(AliCaloRawStreamV3* rawStream)
 {
   const UShort_t * const signal = rawStream->GetSignals(); // stream of 10-bit words, buffered as 16-bit words

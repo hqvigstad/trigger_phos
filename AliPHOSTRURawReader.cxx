@@ -8,11 +8,14 @@
 AliPHOSTRURawReader::AliPHOSTRURawReader()
   : fRegions()
 {
+  if( ! AliPHOSGeometry::GetInstance() )
+    AliPHOSGeometry::GetInstance("PHOS", "PHOS");
+
   const int nMod = AliPHOSGeometry::GetInstance()->GetNModules();
   
-  vector<AliPHOSTRURegionRawReader*> sBranches(kNBranches, NULL);
-  vector<vector<AliPHOSTRURegionRawReader*> > sRows(kNTRURows, sBranches);
-  fRegions = vector<vector<vector<AliPHOSTRURegionRawReader*> > >(nMod, sRows);
+  vector<AliPHOSTRURegionRawReader*> branches(kNBranches, NULL);
+  vector<vector<AliPHOSTRURegionRawReader*> > rows(kNTRURows, branches);
+  fRegions = vector<vector<vector<AliPHOSTRURegionRawReader*> > >(nMod, rows);
 }
     
     

@@ -4,6 +4,8 @@
 class AliPHOSEMCRawReader;
 class AliPHOSTRURawReader;
 
+class AliCaloRawStreamV3;
+
 class AliPHOSRawReader
 {
  public:

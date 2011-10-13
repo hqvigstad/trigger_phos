@@ -1,7 +1,8 @@
 #include "AliPHOSRawReader.h"
+
 #include "AliPHOSEMCRawReader.h"
 #include "AliPHOSTRURawReader.h"
-
+#include "AliCaloRawStreamV3.h"
 
 
 AliPHOSRawReader::AliPHOSRawReader()
@@ -21,24 +22,24 @@ AliPHOSRawReader::~AliPHOSRawReader()
 
 void AliPHOSRawReader::ReadFromStream(AliCaloRawStreamV3* rawStream)
 {
-  fHGReader.Reset();
-  fLGReader.Reset();
-  fTRUReader.Reset();
+  fHGReader->Reset();
+  fLGReader->Reset();
+  fTRUReader->Reset();
 
-  while (raw->NextDDL()) {
-    while (raw->NextChannel()) {
-      Int_t caloFlag = raw->GetCaloFlag();
+  while (rawStream->NextDDL()) {
+    while (rawStream->NextChannel()) {
+      Int_t caloFlag = rawStream->GetCaloFlag();
       if(caloFlag == 0) // low gain
 	{
-	  fLGReader.ReadFromStream(rawStream);
+	  fLGReader->ReadFromStream(rawStream);
 	}
       else if(caloFlag == 1) // high gain
 	{
-	  fHGReader.ReadFromStream(rawStream);
+	  fHGReader->ReadFromStream(rawStream);
 	}
-      else if (raw->IsTRUData()) // tru
+      else if (rawStream->IsTRUData()) // tru
 	{
-	  fTRUReader.ReadFromStream(rawStream);
+	  fTRUReader->ReadFromStream(rawStream);
 	}
     } // end of NextChannel()
   } // end of NextDDL()

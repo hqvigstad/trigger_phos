@@ -1,40 +1,43 @@
-#ifndef PHOSRAWANALYSIS_H
-#define PHOSRAWANALYSIS_H
-
+#ifndef ALIPHOSTRIGGERANALYSIS_H
+#define ALIPHOSTRIGGERANALYSIS_H
 
 class AliRawReaderChain;
 class AliPHOSTriggerAnalysisHistograms;
 class AliPHOSRawReader;
+class AliPHOSEMCRawReader;
+class AliPHOSTRURawReader;
+class AliPHOSTRUCalibData;
+
 
 #include "TString.h"
 
 #include <vector>
 
-class PHOSRawAnalysis
+class AliPHOSTriggerAnalysis
 {
  public:
-  PHOSRawAnalysis();
-  ~PHOSRawAnalysis();
+  AliPHOSTriggerAnalysis();
+  ~AliPHOSTriggerAnalysis();
   
   void ProcessEvent(AliPHOSRawReader* );
 
-  int SaveResults(TString filename = "PHOSRawAnalysisResults.root") const;
+  void SaveResults(TString filename = "AliPHOSTriggerAnalysisResults.root") const;
 
   void SetVerbose(int vValue = 1) {fVerbose = vValue;}
   void SetAnalyseModule(int mod, bool analyse = true) {fModules[mod] = analyse;}
   
-  static int Get2x2Signal(AliPHOSEMCReader* reader, int mod, int xIdx, int zIdx, int& maxIsAtTime);
-  static int Get2x2Max(AliPHOSEMCReader* reader, int mod, int xIdx, int zIdx, int& maxIsAtTime);
-  static int Get2x2Max(AliPHOSTRUReader* reader, int mod, int xIdx, int zIdx, int& maxIsAtTime);
-  static int Get4x4Max(AliPHOSEMCReader* reader, int mod, int TRURow, int branch, int xIdx, int zIdx, int& maxIsAtTime);
-  static int Get4x4Max(AliPHOSTRUReader* reader, int mod, int TRURow, int branch, int xIdx, int zIdx, int& maxIsAtTime);
-  static bool Is2x2Saturated(AliPHOSEMCReader* reader, int mod, int xIdx, int zIdx, int satThreshold);
-  static bool Is4x4Saturated(AliPHOSEMCReader* reader, int mod, int TRURow, int branch, int xIdx, int zIdx, int satThreshold);
+  static int Get2x2Signal(AliPHOSEMCRawReader*, int mod, int xIdx, int zIdx, int timeBin);
+  static int Get2x2Max(AliPHOSEMCRawReader*, int mod, int xIdx, int zIdx);
+  static int Get2x2Max(AliPHOSTRURawReader*, int mod, int xIdx, int zIdx);
+  static int Get4x4Max(AliPHOSEMCRawReader*, int mod, int TRURow, int branch, int xIdx, int zIdx);
+  static int Get4x4Max(AliPHOSTRURawReader*, int mod, int TRURow, int branch, int xIdx, int zIdx);
+  static bool Is2x2Saturated(AliPHOSEMCRawReader*, int mod, int xIdx, int zIdx, int satThreshold);
+  static bool Is4x4Saturated(AliPHOSEMCRawReader*, int mod, int TRURow, int branch, int xIdx, int zIdx, int satThreshold);
     
  protected:
-  Int_t fVerbose; // , level of verbosity, 0="silent", 1=moderately, 2=excessively 
+  int fVerbose; // , level of verbosity, 0="silent", 1=moderately, 2=excessively 
   std::vector<bool> fModules; // , per module: should analyser analyse module
-  Int_t fSaturationThreshold;
+  UShort_t fSaturationThreshold;
   
   AliPHOSTriggerAnalysisHistograms* fHistograms; // , where histograms reside
   

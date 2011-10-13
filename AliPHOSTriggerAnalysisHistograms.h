@@ -8,8 +8,8 @@ class TH2I;
 
 class AliPHOSTriggerAnalysisHistograms
 {
+ public:
   AliPHOSTriggerAnalysisHistograms();
-  AliPHOSTriggerAnalysisHistograms(TString fileName);
   ~AliPHOSTriggerAnalysisHistograms();
   
   TH2I* GetLGTSPeakCorrelation();
@@ -22,17 +22,17 @@ class AliPHOSTriggerAnalysisHistograms
   TH2I* GetTriggeredSWHGTSPeakRatio();
   TH2I* GetTriggeredSWHGTSPeakCorrelationUS();
   
-  int SaveResults(TString filename, TString options = "RECREATE");
+  void SaveResults(TString filename, TString options = "RECREATE");
 
  protected:
   TH2I* fLGTSPeakCorrelation;
   TH2I* fHGTSPeakCorrelation;
-  TH1I* fHGTSPeakRatio;
+  TH2I* fHGTSPeakRatio;
   TH2I* fHGTSPeakCorrelationUS;
   TH1I* fTriggerTime;
   TH2I* fTriggeredSWLGTSPeakCorrelation;
   TH2I* fTriggeredSWHGTSPeakCorrelation;
-  TH1I* fTriggeredSWHGTSPeakRatio;
+  TH2I* fTriggeredSWHGTSPeakRatio;
   TH2I* fTriggeredSWHGTSPeakCorrelationUS;
 
 };

@@ -7,6 +7,9 @@ AliPHOSEMCRawReader::AliPHOSEMCRawReader()
   : fSignals(),
     fActive()
 {
+  if( ! AliPHOSGeometry::GetInstance() )
+    AliPHOSGeometry::GetInstance("PHOS", "PHOS");
+  
   const int nM = AliPHOSGeometry::GetInstance()->GetNModules();
   const int nX = AliPHOSGeometry::GetInstance()->GetNPhi();
   const int nZ = AliPHOSGeometry::GetInstance()->GetNZ();

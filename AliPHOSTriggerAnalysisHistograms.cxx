@@ -5,41 +5,21 @@
 #include "TFile.h"
 
 AliPHOSTriggerAnalysisHistograms::AliPHOSTriggerAnalysisHistograms()
-  :
-  fLGTSPeakCorrelation(0),
-  fHGTSPeakCorrelation(0),
-  fHGTSPeakRatio(0),
-  fHGTSPeakCorrelationUS(0),
-  fTriggerTime(0),
-  fTriggeredSWLGTSPeakCorrelation(0),
-  fTriggeredSWHGTSPeakCorrelation(0),
-  fTriggeredSWHGTSPeakRatio(0),
-  fTriggeredSWHGTSPeakCorrelationUS(0)
+  : fLGTSPeakCorrelation(0),
+    fHGTSPeakCorrelation(0),
+    fHGTSPeakRatio(0),
+    fHGTSPeakCorrelationUS(0),
+    fTriggerTime(0),
+    fTriggeredSWLGTSPeakCorrelation(0),
+    fTriggeredSWHGTSPeakCorrelation(0),
+    fTriggeredSWHGTSPeakRatio(0),
+    fTriggeredSWHGTSPeakCorrelationUS(0)
 {
 }
 
 
-int SaveResults(TString fileName, TString options)
+AliPHOSTriggerAnalysisHistograms::~AliPHOSTriggerAnalysisHistograms()
 {
-  TFile* file = new TFile(fileName, options);
-  file->cd();
-  
-  fLGTSPeakCorrelation->Write();
-  fHGTSPeakCorrelation->Write();
-  fHGTSPeakRatio->Write();
-  fHGTSPeakCorrelationUS->Write();
-  fTriggerTime->Write();
-  fTriggeredSWLGTSPeakCorrelation->Write();
-  fTriggeredSWHGTSPeakCorrelation->Write();
-  fTriggeredSWHGTSPeakRatio->Write();
-  fTriggeredSWHGTSPeakCorrelationUS->Write();
-
-  file->Close();
-}
-
-AliPHOSTriggerAnalysisHistograms::~AliPHOSTriggerAnalysisHistograms();
-{
-  return;
 }
 
 
@@ -142,14 +122,32 @@ TH2I* AliPHOSTriggerAnalysisHistograms::GetTriggeredSWHGTSPeakRatio()
 
 TH2I* AliPHOSTriggerAnalysisHistograms::GetTriggeredSWHGTSPeakCorrelationUS()
 {
-  if( ! fTriggeredSWLGTSPeakCorrelationUS ) {
-    fTriggeredSWLGTSPeakCorrelationUS = new TH2I("fTriggeredSWLGTSPeakCorrelationUS", 
-					       "Triggered Sliding Windows LG-TS Peak Correlation, UnSaturated", 
+  if( ! fTriggeredSWHGTSPeakCorrelationUS ) {
+    fTriggeredSWHGTSPeakCorrelationUS = new TH2I("fTriggeredSWHGTSPeakCorrelationUS", 
+					       "Triggered Sliding Windows HG-TS Peak Correlation, UnSaturated", 
 					       16368/4/4, 0, 16368,  16368/4/4, 0, 16368);
-    fTriggeredSWLGTSPeakCorrelationUS->GetXaxis()->SetTitle("LG 4x4");
-    fTriggeredSWLGTSPeakCorrelationUS->GetYaxis()->SetTitle("TS 4x4");
+    fTriggeredSWHGTSPeakCorrelationUS->GetXaxis()->SetTitle("HG 4x4");
+    fTriggeredSWHGTSPeakCorrelationUS->GetYaxis()->SetTitle("TS 4x4");
   }
-  return fTriggeredSWLGTSPeakCorrelationUS;
+  return fTriggeredSWHGTSPeakCorrelationUS;
 }
 
+
+void AliPHOSTriggerAnalysisHistograms::SaveResults(TString fileName, TString options)
+{
+  TFile* file = new TFile(fileName, options);
+  file->cd();
+  
+  GetLGTSPeakCorrelation()->Write();
+  GetHGTSPeakCorrelation()->Write();
+  GetHGTSPeakRatio()->Write();
+  GetHGTSPeakCorrelationUS()->Write();
+  GetTriggerTime()->Write();
+  GetTriggeredSWLGTSPeakCorrelation()->Write();
+  GetTriggeredSWHGTSPeakCorrelation()->Write();
+  GetTriggeredSWHGTSPeakRatio()->Write();
+  GetTriggeredSWHGTSPeakCorrelationUS()->Write();
+
+  file->Close();
+}
 

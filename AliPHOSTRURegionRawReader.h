@@ -9,6 +9,9 @@ using namespace std;
 class AliPHOSTRURegionRawReader
 {
  public:
+  AliPHOSTRURegionRawReader();
+  ~AliPHOSTRURegionRawReader();
+
   Short_t GetTriggerSignal(int xIdx, int zIdx, int timeBin) const {return fSignals[xIdx][zIdx][timeBin];}
   Short_t GetTriggerFlag(int xIdx, int zIdx, int timeBin) const {return fFlags[xIdx][zIdx][timeBin];}
   bool IsActive() {return fActive;}
