@@ -1,5 +1,5 @@
 #include "AliPHOSTriggerParameters.h"
-
+#include "TString.h"
 
 ClassImp(AliPHOSTriggerParameters)
 
@@ -13,7 +13,7 @@ AliPHOSTriggerParameters::AliPHOSTriggerParameters()
 
 
 AliPHOSTriggerParameters::AliPHOSTriggerParameters(const char* name)
-  : TNamed(name)
+  : TNamed(name, name)
 {
   // Specific constructor, passes name to TNamed base. Initialises with Reset().
 
@@ -25,52 +25,52 @@ AliPHOSTriggerParameters::AliPHOSTriggerParameters(const AliPHOSTriggerParameter
   : TNamed(other)
 {
   // copy constructor
-
+  
   for(int mod = 0; mod < kNMods; ++mod) {
     for(int TRURow = 0; TRURow < kNTRURows; TRURow++) {
       for(int branch = 0; branch < kNBranches; branch++) {
-	fTRUPedestals[mod][TRURow][branch][xIdx][zIdx] = other.fTRUPedestals[mod][TRURow][branch][xIdx][zIdx];
 	for(int xIdx = 0; xIdx < kNTRUX; xIdx++) {
 	  for(int zIdx = 0; zIdx < kNTRUZ; zIdx++) {
-	    fTRUTriggerBitReadoutOn[mod][TRURow][branch] = other.fTRUTriggerBitReadoutOn[mod][TRURow][branch];
-	    fTRUSignalReadoutOn[mod][TRURow][branch] = other.fTRUSignalReadoutOn[mod][TRURow][branch];
-	    fTRUSignalTimeBinFrom[mod][TRURow][branch] = other.fTRUSignalTimeBinFrom[mod][TRURow][branch];
-	    fTRUSignalTimeBinTo[mod][TRURow][branch] = other.fTRUSignalTimeBinTo[mod][TRURow][branch];
-	    fTRUThreshold[mod][TRURow][branch] = other.fTRUThreshold[mod][TRURow][branch];
-	    fTRUMaskChannel[mod][TRURow][branch] = other.fTRUMaskChannel[mod][TRURow][branch];
-	  }
-	}
-      }
-    }
+	    fTRUPedestals[mod][TRURow][branch][xIdx][zIdx] = other.fTRUPedestals[mod][TRURow][branch][xIdx][zIdx];
+	  } // end zIdx
+	} // end xIdx
+	fTRUTriggerBitReadoutOn[mod][TRURow][branch] = other.fTRUTriggerBitReadoutOn[mod][TRURow][branch];
+	fTRUSignalReadoutOn[mod][TRURow][branch] = other.fTRUSignalReadoutOn[mod][TRURow][branch];
+	fTRUSignalTimeBinFrom[mod][TRURow][branch] = other.fTRUSignalTimeBinFrom[mod][TRURow][branch];
+	fTRUSignalTimeBinTo[mod][TRURow][branch] = other.fTRUSignalTimeBinTo[mod][TRURow][branch];
+	fTRUThreshold[mod][TRURow][branch] = other.fTRUThreshold[mod][TRURow][branch];
+	fTRUMaskChannel[mod][TRURow][branch] = other.fTRUMaskChannel[mod][TRURow][branch];
+      } // end branch 
+    } // end tru
     // for(int tor = 0; tor < kNTORs; tor++) {
     //   fTORMaskArray[mod][tor] = other.fTORMaskArray[mod][tor] ;
     //   fTORReadoutMask[mod][tor] = other.fTORReadoutMask[mod][tor];
     // }
-  }
+  } // end mod
 }
 
 
-AliPHOSTriggerParameters::AliPHOSTriggerParameters& operator= (const AliPHOSTriggerParameters& other)
+AliPHOSTriggerParameters& AliPHOSTriggerParameters::operator= (const AliPHOSTriggerParameters& other)
 {
   // assignement
   
   SetName(other.GetName());
-  SetTitle(other.SetTitle());
+  SetTitle(other.GetTitle());
 
   for(int mod = 0; mod < kNMods; ++mod) {
     for(int TRURow = 0; TRURow < kNTRURows; TRURow++) {
       for(int branch = 0; branch < kNBranches; branch++) {
-	fTRUPedestals[mod][TRURow][branch][xIdx][zIdx] = other.fTRUPedestals[mod][TRURow][branch][xIdx][zIdx];
 	for(int xIdx = 0; xIdx < kNTRUX; xIdx++) {
 	  for(int zIdx = 0; zIdx < kNTRUZ; zIdx++) {
-	    fTRUTriggerBitReadoutOn[mod][TRURow][branch] = other.fTRUTriggerBitReadoutOn[mod][TRURow][branch];
-	    fTRUSignalReadoutOn[mod][TRURow][branch] = other.fTRUSignalReadoutOn[mod][TRURow][branch];
-	    fTRUSignalTimeBinFrom[mod][TRURow][branch] = other.fTRUSignalTimeBinFrom[mod][TRURow][branch];
-	    fTRUSignalTimeBinTo[mod][TRURow][branch] = other.fTRUSignalTimeBinTo[mod][TRURow][branch];
-	    fTRUThreshold[mod][TRURow][branch] = other.fTRUThreshold[mod][TRURow][branch];
-	    fTRUMaskChannel[mod][TRURow][branch] = other.fTRUMaskChannel[mod][TRURow][branch];
+	    fTRUPedestals[mod][TRURow][branch][xIdx][zIdx] = other.fTRUPedestals[mod][TRURow][branch][xIdx][zIdx];
 	  }
 	}
+	fTRUTriggerBitReadoutOn[mod][TRURow][branch] = other.fTRUTriggerBitReadoutOn[mod][TRURow][branch];
+	fTRUSignalReadoutOn[mod][TRURow][branch] = other.fTRUSignalReadoutOn[mod][TRURow][branch];
+	fTRUSignalTimeBinFrom[mod][TRURow][branch] = other.fTRUSignalTimeBinFrom[mod][TRURow][branch];
+	fTRUSignalTimeBinTo[mod][TRURow][branch] = other.fTRUSignalTimeBinTo[mod][TRURow][branch];
+	fTRUThreshold[mod][TRURow][branch] = other.fTRUThreshold[mod][TRURow][branch];
+	fTRUMaskChannel[mod][TRURow][branch] = other.fTRUMaskChannel[mod][TRURow][branch];
       }
     }
     // for(int tor = 0; tor < kNTORs; tor++) {
@@ -78,11 +78,14 @@ AliPHOSTriggerParameters::AliPHOSTriggerParameters& operator= (const AliPHOSTrig
     //   fTORReadoutMask[mod][tor] = other.fTORReadoutMask[mod][tor];
     // }
   }
+  return *this;
 }
 
 
-virtual AliPHOSTriggerParameters::~AliPHOSTriggerParameters()
-{}
+AliPHOSTriggerParameters::~AliPHOSTriggerParameters()
+{
+  // destructor
+}
 
 
 
@@ -265,9 +268,11 @@ void AliPHOSTriggerParameters::SetTRUMaskChannel(UShort_t mask, int mod, int TRU
 
 
 
-virtual void AliPHOSTriggerParameters::Print(Option_t *option) const
+void AliPHOSTriggerParameters::Print(Option_t *option) const
 {
   // Will Write uppon request (Henrik Qvigstad <henrik.qvigstad@cern.ch>)
+  if(option)
+    Printf("AliPHOSTriggerParameters::Print is not implemented.");
 }
 
 
@@ -278,15 +283,15 @@ void AliPHOSTriggerParameters::Reset()
     for(int mod = 0; mod < kNMods; ++mod) {
     for(int TRURow = 0; TRURow < kNTRURows; TRURow++) {
       for(int branch = 0; branch < kNBranches; branch++) {
-	fTRUPedestals[mod][TRURow][branch][xIdx][zIdx] = kIdealTRUPedestal;
+	fTRUTriggerBitReadoutOn[mod][TRURow][branch] = 0;
+	fTRUSignalReadoutOn[mod][TRURow][branch] = 0;
+	fTRUSignalTimeBinFrom[mod][TRURow][branch] = 0;
+	fTRUSignalTimeBinTo[mod][TRURow][branch] = kDefaultNTRUTimeBins-1;
+	fTRUThreshold[mod][TRURow][branch] = 0;
+	fTRUMaskChannel[mod][TRURow][branch] = 0;
 	for(int xIdx = 0; xIdx < kNTRUX; xIdx++) {
 	  for(int zIdx = 0; zIdx < kNTRUZ; zIdx++) {
-	    fTRUTriggerBitReadoutOn[mod][TRURow][branch] = 0;
-	    fTRUSignalReadoutOn[mod][TRURow][branch] = 0;
-	    fTRUSignalTimeBinFrom[mod][TRURow][branch] = 0;
-	    fTRUSignalTimeBinTo[mod][TRURow][branch] = kDefaultNTRUTimeBins-1;
-	    fTRUThreshold[mod][TRURow][branch] = 0;
-	    fTRUMaskChannel[mod][TRURow][branch] = 0;
+	    fTRUPedestals[mod][TRURow][branch][xIdx][zIdx] = kIdealTRUPedestal;
 	  }
 	}
       }

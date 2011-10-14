@@ -6,12 +6,11 @@
 
 /* $Id$ */
 
-/*
- *  class for TRU Calib Data: Pedestals, etc...
- */
- 
+
 #include "TNamed.h"
 
+/*  class for TRU Calib Data: Pedestals, etc...
+ */
 class AliPHOSTriggerParameters : public TNamed {
 
  public:
@@ -54,7 +53,7 @@ class AliPHOSTriggerParameters : public TNamed {
   static const int kNBranches = 2; // Number of Branches
   static const int kNTRUX = 8; // Number of 2x2 per TRU in x
   static const int kNTRUZ = 14; // Number of 2x2 per TRU in z
-  static const UShort_t kIdealTRUPedestal = 525; // Ideal TRU Pedestal
+  static const UShort_t kIdealTRUPedestal = 512; // Ideal TRU Pedestal
   static const int kDefaultNTRUTimeBins = 128; // Number of timebins
   
  protected:
