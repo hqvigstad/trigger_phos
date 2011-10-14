@@ -9,6 +9,7 @@
 #include "AliLog.h"
 #include "AliTriggerClass.h"
 #include "AliTriggerConfiguration.h"
+#include "AliPHOSTriggerParameters.h"
 #include "AliCDBManager.h"
 #include "TMath.h"
 
@@ -19,7 +20,7 @@ using namespace std;
 void analyseRawChain(TChain* );
 void addFilesToChain(const TString fileName, TChain* );
 TString GetTriggerClass(AliRawReaderChain* );
-
+#include "readTRUPedestals.C"
 
 void phosTriggerAnalysis(TString rawFileList = "files.txt")
 {
@@ -43,11 +44,16 @@ void analyseRawChain(TChain* chain)
   AliPHOSTriggerAnalysis* rawAnalysisCPHI7 = 
     new AliPHOSTriggerAnalysis();
 
+  // Read Pedestals
+  AliPHOSTriggerParameters* parameters = new AliPHOSTriggerParameters();
+  readTRUPedestals(parameters);
+  rawAnalysisCINT7->SetTriggerParameters(parameters);
+  rawAnalysisCPHI7->SetTriggerParameters(parameters);
+
 
   // Create an AliPHOSRawReader to read the stream
   AliPHOSRawReader* phosRawReader = new AliPHOSRawReader;
-
-
+  
   // Prepare and loop over the chain
   AliRawReaderChain* rawChain = new AliRawReaderChain(chain);
   rawChain->Reset();

@@ -6,6 +6,7 @@
 #include "AliPHOSEMCRawReader.h"
 #include "AliPHOSTRURawReader.h"
 #include "AliPHOSTRURegionRawReader.h"
+#include "AliPHOSTriggerParameters.h"
 
 #include "AliPHOSGeometry.h"
 #include "TH1I.h"
@@ -18,6 +19,7 @@ AliPHOSTriggerAnalysis::AliPHOSTriggerAnalysis()
   :fVerbose(0),
    fModules(AliPHOSGeometry::GetInstance("PHOS","PHOS")->GetNModules(), false),
    fSaturationThreshold(950),
+   fParameters(0),
    fHistograms(new AliPHOSTriggerAnalysisHistograms)
 {
   SetAnalyseModule(2);
@@ -46,7 +48,7 @@ void AliPHOSTriggerAnalysis::ProcessEvent(AliPHOSRawReader* rawReader)
       for(int xIdx = 0; xIdx < n2x2X; ++xIdx) {
 	for(int zIdx = 0; zIdx < n2x2Z; ++zIdx) {
 	  // Get peak values
-	  const int TSmax = Get2x2Max(rawReader->GetTRUReader(), mod, xIdx, zIdx);
+	  const int TSmax = Get2x2Max(rawReader->GetTRUReader(), fParameters, mod, xIdx, zIdx);
 	  const int LGmax = Get2x2Max(rawReader->GetLGReader(), mod, xIdx, zIdx);
 	  const int HGmax = Get2x2Max(rawReader->GetHGReader(), mod, xIdx, zIdx);
 	  const bool HGSaturated = Is2x2Saturated(rawReader->GetHGReader(), mod, xIdx, zIdx, fSaturationThreshold);
@@ -78,7 +80,7 @@ void AliPHOSTriggerAnalysis::ProcessEvent(AliPHOSRawReader* rawReader)
 
 	      if( triggered ){
 		// Get peak values
-		const int TSmax = Get4x4Max(rawReader->GetTRUReader(), mod, TRURow, branch, xIdx, zIdx);
+		const int TSmax = Get4x4Max(rawReader->GetTRUReader(), fParameters, mod, TRURow, branch, xIdx, zIdx);
 		const int LGmax = Get4x4Max(rawReader->GetLGReader(), mod, TRURow, branch, xIdx, zIdx);
 		const int HGmax = Get4x4Max(rawReader->GetHGReader(), mod, TRURow, branch, xIdx, zIdx);
 		const bool HGSaturated = Is4x4Saturated(rawReader->GetHGReader(), mod, TRURow, branch, xIdx, zIdx, fSaturationThreshold );
@@ -111,6 +113,26 @@ int AliPHOSTriggerAnalysis::Get2x2Signal(AliPHOSEMCRawReader* reader, int mod, i
 }
 
 
+int AliPHOSTriggerAnalysis::Get2x2Signal(AliPHOSTRURawReader* reader, AliPHOSTriggerParameters* parameters, int mod, int xIdx, int zIdx, int timeBin)
+{
+  const int n2x2X = AliPHOSGeometry::GetInstance()->GetNPhi() /2;
+  const int n2x2Z = AliPHOSGeometry::GetInstance()->GetNZ() /2;
+  const int n2x2XprTRURow = (n2x2X /kNTRURows);
+  const int n2x2ZprBranch = (n2x2Z /kNBranches);
+
+  const int RCURow = xIdx / n2x2XprTRURow;
+  const int branch = zIdx / n2x2ZprBranch;
+  const int RCUX = xIdx % n2x2XprTRURow; // 2x2 coordinates
+  const int RCUZ = zIdx % n2x2ZprBranch; // 2x2 coordinates
+
+  const Short_t signal = reader->GetTRURegion(mod, RCURow, branch)->GetTriggerSignal( RCUX, RCUZ, timeBin);
+  if(parameters)
+    return signal - parameters->GetTRUPedestal(mod, RCURow, branch, RCUX, RCUZ);
+  else
+    return signal;
+}
+
+
 int AliPHOSTriggerAnalysis::Get2x2Max(AliPHOSEMCRawReader* reader, int mod, int xIdx, int zIdx)
 {
   int max = 0;
@@ -124,21 +146,11 @@ int AliPHOSTriggerAnalysis::Get2x2Max(AliPHOSEMCRawReader* reader, int mod, int 
 }
 
 
-int AliPHOSTriggerAnalysis::Get2x2Max(AliPHOSTRURawReader* reader, int mod, int xIdx, int zIdx)
+int AliPHOSTriggerAnalysis::Get2x2Max(AliPHOSTRURawReader* reader, AliPHOSTriggerParameters* params, int mod, int xIdx, int zIdx)
 {
-  const int n2x2X = AliPHOSGeometry::GetInstance()->GetNPhi() /2;
-  const int n2x2Z = AliPHOSGeometry::GetInstance()->GetNZ() /2;
-  const int n2x2XprTRURow = (n2x2X /kNTRURows);
-  const int n2x2ZprBranch = (n2x2Z /kNBranches);
-
-  const int RCURow = xIdx / n2x2XprTRURow;
-  const int branch = zIdx / n2x2ZprBranch;
-  const int RCUX = xIdx % n2x2XprTRURow; // 2x2 coordinates
-  const int RCUZ = zIdx % n2x2ZprBranch; // 2x2 coordinates
-
   int max = 0;
   for(int timeBin = 0; timeBin < kNTimeBins; ++timeBin) {
-    const int signal = reader->GetTRURegion(mod, RCURow, branch)->GetTriggerSignal( RCUX, RCUZ, timeBin);
+    const int signal = Get2x2Signal(reader, params, mod, xIdx, zIdx, timeBin);
     if( max < signal ){
       max = signal;
     }
@@ -147,15 +159,18 @@ int AliPHOSTriggerAnalysis::Get2x2Max(AliPHOSTRURawReader* reader, int mod, int 
 }
 
 
-int AliPHOSTriggerAnalysis::Get4x4Max(AliPHOSTRURawReader* reader, int mod, int TRURow, int branch, int xIdx, int zIdx)
+int AliPHOSTriggerAnalysis::Get4x4Max(AliPHOSTRURawReader* reader, AliPHOSTriggerParameters* params, int mod, int TRURow, int branch, int xIdx, int zIdx)
 {
+  int modX = xIdx + TRURow * (AliPHOSGeometry::GetInstance()->GetNPhi() / kNTRURows) /2;
+  int modZ = zIdx + branch * (AliPHOSGeometry::GetInstance()->GetNZ() / kNBranches) /2;
+
   int max = 0;
   for(int timeBin = 0; timeBin < kNTimeBins; ++timeBin) {
     const int signal
-      = reader->GetTRURegion(mod, TRURow, branch)->GetTriggerSignal(xIdx  , zIdx  , timeBin)
-      + reader->GetTRURegion(mod, TRURow, branch)->GetTriggerSignal(xIdx+1, zIdx  , timeBin)
-      + reader->GetTRURegion(mod, TRURow, branch)->GetTriggerSignal(xIdx  , zIdx+1, timeBin)
-      + reader->GetTRURegion(mod, TRURow, branch)->GetTriggerSignal(xIdx+1, zIdx+1, timeBin);
+      = Get2x2Signal(reader, params, mod, modX  , modZ  , timeBin)
+      + Get2x2Signal(reader, params, mod, modX+1, modZ  , timeBin)
+      + Get2x2Signal(reader, params, mod, modX  , modZ+1, timeBin)
+      + Get2x2Signal(reader, params, mod, modX+1, modZ+1, timeBin);
     if( max < signal ){
       max = signal;
     }
