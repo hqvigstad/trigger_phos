@@ -37,6 +37,17 @@ class AliPHOSTriggerAnalysis
   static bool Is2x2Saturated(AliPHOSEMCRawReader*, int mod, int xIdx, int zIdx, int satThreshold);
   static bool Is4x4Saturated(AliPHOSEMCRawReader*, int mod, int TRURow, int branch, int xIdx, int zIdx, int satThreshold);
     
+  
+  const static int kNTRURows = 4;
+  const static int kNBranches = 2;
+  const static int kN2x2X = 64/2;
+  const static int kN2x2Z = 56/2;
+  const static int kN2x2XPrTRURow = kN2x2X / kNTRURows;
+  const static int kN2x2ZPrBranch = kN2x2X / kNBranches;
+  const static int kN4x4XPrTRURow = kN2x2XPrRow -1;
+  const static int kN4x4ZPrBranch = kN2x2ZPrBranch -1;
+  const static int kNTRUTimeBins = 128;
+  
  protected:
   int fVerbose; // , level of verbosity, 0="silent", 1=moderately, 2=excessively 
   std::vector<bool> fModules; // , per module: should analyser analyse module
@@ -45,9 +56,6 @@ class AliPHOSTriggerAnalysis
   
   AliPHOSTriggerAnalysisHistograms* fHistograms; // , where histograms reside
   
-  const static int kNTimeBins = 128;
-  const static int kNTRURows = 4;
-  const static int kNBranches = 2;
 
 };
 

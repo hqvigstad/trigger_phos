@@ -35,18 +35,13 @@ AliPHOSTriggerAnalysis::~AliPHOSTriggerAnalysis()
 
 void AliPHOSTriggerAnalysis::ProcessEvent(AliPHOSRawReader* rawReader)
 {
-  const int n2x2X = AliPHOSGeometry::GetInstance()->GetNPhi() /2;
-  const int n2x2Z = AliPHOSGeometry::GetInstance()->GetNZ() /2;
-  const int n4x4XprTRURow = (n2x2X /kNTRURows) -1;
-  const int n4x4ZprBranch = (n2x2Z /kNBranches) -1;
-  
   // Loop over modules
   for(unsigned int mod = 0; mod < fModules.size(); ++mod) {
     if( fModules[mod] ) {
       
       // Loop over 2x2 cells
-      for(int xIdx = 0; xIdx < n2x2X; ++xIdx) {
-	for(int zIdx = 0; zIdx < n2x2Z; ++zIdx) {
+      for(int xIdx = 0; xIdx < kN2x2X; ++xIdx) {
+	for(int zIdx = 0; zIdx < kN2x2Z; ++zIdx) {
 	  // Get peak values
 	  const int TSmax = Get2x2Max(rawReader->GetTRUReader(), fParameters, mod, xIdx, zIdx);
 	  const int LGmax = Get2x2Max(rawReader->GetLGReader(), mod, xIdx, zIdx);
@@ -66,8 +61,8 @@ void AliPHOSTriggerAnalysis::ProcessEvent(AliPHOSRawReader* rawReader)
       // Loop over 4x4 cells
       for(int TRURow = 0; TRURow < kNTRURows; ++TRURow) {
 	for(int branch = 0; branch < kNBranches; ++branch) {
-	  for(int xIdx=0; xIdx < n4x4XprTRURow; ++xIdx) {
-	    for(int zIdx=0; zIdx < n4x4ZprBranch; ++zIdx) {
+	  for(int xIdx=0; xIdx < n4x4XPrTRURow; ++xIdx) {
+	    for(int zIdx=0; zIdx < n4x4ZPrBranch; ++zIdx) {
 
 	      // Determin if Trigger is flagged for any timeBin
 	      bool triggered = false;
@@ -115,15 +110,10 @@ int AliPHOSTriggerAnalysis::Get2x2Signal(AliPHOSEMCRawReader* reader, int mod, i
 
 int AliPHOSTriggerAnalysis::Get2x2Signal(AliPHOSTRURawReader* reader, AliPHOSTriggerParameters* parameters, int mod, int xIdx, int zIdx, int timeBin)
 {
-  const int n2x2X = AliPHOSGeometry::GetInstance()->GetNPhi() /2;
-  const int n2x2Z = AliPHOSGeometry::GetInstance()->GetNZ() /2;
-  const int n2x2XprTRURow = (n2x2X /kNTRURows);
-  const int n2x2ZprBranch = (n2x2Z /kNBranches);
-
-  const int RCURow = xIdx / n2x2XprTRURow;
-  const int branch = zIdx / n2x2ZprBranch;
-  const int RCUX = xIdx % n2x2XprTRURow; // 2x2 coordinates
-  const int RCUZ = zIdx % n2x2ZprBranch; // 2x2 coordinates
+  const int RCURow = xIdx / kN2x2XPrTRURow;
+  const int branch = zIdx / kN2x2ZPrBranch;
+  const int RCUX = xIdx % kN2x2XPrTRURow; // 2x2 coordinates
+  const int RCUZ = zIdx % kN2x2ZPrBranch; // 2x2 coordinates
 
   const Short_t signal = reader->GetTRURegion(mod, RCURow, branch)->GetTriggerSignal( RCUX, RCUZ, timeBin);
   if(parameters)
