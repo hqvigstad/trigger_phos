@@ -1,9 +1,32 @@
+/**************************************************************************
+ * Copyright(c) 1998-1999, ALICE Experiment at CERN, All rights reserved. *
+ *                                                                        *
+ * Author: The ALICE Off-line Project.                                    *
+ * Contributors are mentioned in the code where appropriate.              *
+ *                                                                        *
+ * Permission to use, copy, modify and distribute this software and its   *
+ * documentation strictly for non-commercial purposes is hereby granted   *
+ * without fee, provided that the above copyright notice appears in all   *
+ * copies and that both the copyright notice and this permission notice   *
+ * appear in the supporting documentation. The authors make no claims     *
+ * about the suitability of this software for any purpose. It is          *
+ * provided "as is" without express or implied warranty.                  *
+ **************************************************************************/
+
+/* $Id$ */
+
+///////////////////////////////////////////////////////////////////////////////
+//                                                                           //
+// class for PHOS Trigger Parameters                                         //
+//                                                                           //
+///////////////////////////////////////////////////////////////////////////////
+
 #include "AliPHOSTriggerParameters.h"
 #include "TString.h"
 
 ClassImp(AliPHOSTriggerParameters)
 
-
+//________________________________________________________________
 AliPHOSTriggerParameters::AliPHOSTriggerParameters()
   : TNamed()
 {
@@ -11,7 +34,7 @@ AliPHOSTriggerParameters::AliPHOSTriggerParameters()
   Reset();
 }
 
-
+//________________________________________________________________
 AliPHOSTriggerParameters::AliPHOSTriggerParameters(const char* name)
   : TNamed(name, name)
 {
@@ -20,7 +43,7 @@ AliPHOSTriggerParameters::AliPHOSTriggerParameters(const char* name)
   Reset();
 }
 
-
+//________________________________________________________________
 AliPHOSTriggerParameters::AliPHOSTriggerParameters(const AliPHOSTriggerParameters& other)
   : TNamed(other)
 {
@@ -50,6 +73,7 @@ AliPHOSTriggerParameters::AliPHOSTriggerParameters(const AliPHOSTriggerParameter
 }
 
 
+//________________________________________________________________
 AliPHOSTriggerParameters& AliPHOSTriggerParameters::operator= (const AliPHOSTriggerParameters& other)
 {
   // assignement
@@ -81,14 +105,14 @@ AliPHOSTriggerParameters& AliPHOSTriggerParameters::operator= (const AliPHOSTrig
   return *this;
 }
 
-
+//________________________________________________________________
 AliPHOSTriggerParameters::~AliPHOSTriggerParameters()
 {
   // destructor
 }
 
 
-
+//________________________________________________________________
 UShort_t AliPHOSTriggerParameters::GetTRUPedestal(int mod, int TRURow, int branch, int xIdx, int zIdx) const
 {
   // Returns the pedestals of the TRU FakeALTRO Trigger signal, is in the range
@@ -102,6 +126,7 @@ UShort_t AliPHOSTriggerParameters::GetTRUPedestal(int mod, int TRURow, int branc
   
   return fTRUPedestals[mod][TRURow][branch][xIdx][zIdx];
 }
+//________________________________________________________________
 Bool_t AliPHOSTriggerParameters::GetTRUReadoutOn(int mod, int TRURow, int branch) const
 {
   // Returns the TRU specific flag that specifies for the TRU whether 
@@ -113,6 +138,7 @@ Bool_t AliPHOSTriggerParameters::GetTRUReadoutOn(int mod, int TRURow, int branch
 
   return fTRUTriggerBitReadoutOn[mod][TRURow][branch];
 }
+//________________________________________________________________
 Bool_t AliPHOSTriggerParameters::GetTRUSignalReadoutOn(int mod, int TRURow, int branch) const
 {
   // Returns the TRU specific flag that specifies for the TRU whether 
@@ -124,6 +150,7 @@ Bool_t AliPHOSTriggerParameters::GetTRUSignalReadoutOn(int mod, int TRURow, int 
 
   return fTRUSignalReadoutOn[mod][TRURow][branch];
 }
+//________________________________________________________________
 UShort_t AliPHOSTriggerParameters::GetTRUSignalTimeBinFrom(int mod, int TRURow, int branch) const
 {
   // Returns the TRU specific value that specifies from (including), 
@@ -135,6 +162,7 @@ UShort_t AliPHOSTriggerParameters::GetTRUSignalTimeBinFrom(int mod, int TRURow, 
 
   return fTRUSignalTimeBinFrom[mod][TRURow][branch];
 }
+//________________________________________________________________
 UShort_t AliPHOSTriggerParameters::GetTRUSignalTimeBinTo(int mod, int TRURow, int branch) const
 {
   // Returns the TRU specific value that specifies to (including), 
@@ -146,6 +174,7 @@ UShort_t AliPHOSTriggerParameters::GetTRUSignalTimeBinTo(int mod, int TRURow, in
 
   return fTRUSignalTimeBinTo[mod][TRURow][branch];
 }
+//________________________________________________________________
 UShort_t AliPHOSTriggerParameters::GetTRUThreshold(int mod, int TRURow, int branch) const
 {
   // Returns the TRU specific value that specifies the trigger threshold, 
@@ -158,6 +187,7 @@ UShort_t AliPHOSTriggerParameters::GetTRUThreshold(int mod, int TRURow, int bran
   
   return fTRUThreshold[mod][TRURow][branch];
 }
+//________________________________________________________________
 UShort_t AliPHOSTriggerParameters::GetTRUMaskChannel(int mod, int TRURow, int branch) const
 {
   // TODO: description
@@ -168,6 +198,7 @@ UShort_t AliPHOSTriggerParameters::GetTRUMaskChannel(int mod, int TRURow, int br
 
   return fTRUMaskChannel[mod][TRURow][branch];
 }
+//________________________________________________________________
 const UShort_t* AliPHOSTriggerParameters::GetTORMaskArray(int mod, int tor) const
 {
   // TODO: description
@@ -179,6 +210,7 @@ const UShort_t* AliPHOSTriggerParameters::GetTORMaskArray(int mod, int tor) cons
 
   return fTORMaskArray[mod][tor];
 }
+//________________________________________________________________
 const UShort_t* AliPHOSTriggerParameters::GetTORReadoutMask(int mod, int tor) const
 {
   // TODO: description
@@ -192,7 +224,7 @@ const UShort_t* AliPHOSTriggerParameters::GetTORReadoutMask(int mod, int tor) co
 }
 
 
-
+//________________________________________________________________
 void AliPHOSTriggerParameters::SetTRUPedestal(UShort_t pedestal, int mod, int TRURow, int branch, int xIdx, int zIdx)
 {
   // Returns the pedestals of the TRU FakeALTRO Trigger signal, 
@@ -207,6 +239,7 @@ void AliPHOSTriggerParameters::SetTRUPedestal(UShort_t pedestal, int mod, int TR
   
   fTRUPedestals[mod][TRURow][branch][xIdx][zIdx] = pedestal;
 }
+//________________________________________________________________
 void AliPHOSTriggerParameters::SetTRUReadoutOn(Bool_t isOn, int mod, int TRURow, int branch)
 {
   // Returns the TRU specific flag that specifies for the TRU 
@@ -216,7 +249,9 @@ void AliPHOSTriggerParameters::SetTRUReadoutOn(Bool_t isOn, int mod, int TRURow,
   // TRURow: [0,3], TRU Row, indexed in rising number in PHOS x direction
   // branch: [0,1], branch, indexed in rising number in z direction
 
-  fTRUTriggerBitReadoutOn[mod][TRURow][branch] = isOn;}
+  fTRUTriggerBitReadoutOn[mod][TRURow][branch] = isOn;
+}
+//________________________________________________________________
 void AliPHOSTriggerParameters::SetTRUSignalReadoutOn(Bool_t isOn, int mod, int TRURow, int branch)
 {
   // Returns the TRU specific flag that specifies for the TRU whether or not it
@@ -228,6 +263,7 @@ void AliPHOSTriggerParameters::SetTRUSignalReadoutOn(Bool_t isOn, int mod, int T
 
    fTRUSignalReadoutOn[mod][TRURow][branch] = isOn;
 }
+//________________________________________________________________
 void AliPHOSTriggerParameters::SetTRUSignalTimeBinFrom(UShort_t fromBin, int mod, int TRURow, int branch)
 {
   // Returns the TRU specific value that specifies from (including), 
@@ -239,6 +275,7 @@ void AliPHOSTriggerParameters::SetTRUSignalTimeBinFrom(UShort_t fromBin, int mod
 
   fTRUSignalTimeBinFrom[mod][TRURow][branch] = fromBin;
 }
+//________________________________________________________________
 void AliPHOSTriggerParameters::SetTRUSignalTimeBinTo(UShort_t toBin, int mod, int TRURow, int branch)
 {
   // Returns the TRU specific value that specifies to (including), 
@@ -250,6 +287,7 @@ void AliPHOSTriggerParameters::SetTRUSignalTimeBinTo(UShort_t toBin, int mod, in
 
   fTRUSignalTimeBinTo[mod][TRURow][branch] = toBin;
 }
+//________________________________________________________________
 void AliPHOSTriggerParameters::SetTRUThreshold(UShort_t threshold, int mod, int TRURow, int branch)
 {
   // Returns the TRU specific value that specifies the trigger threshold, 
@@ -261,6 +299,7 @@ void AliPHOSTriggerParameters::SetTRUThreshold(UShort_t threshold, int mod, int 
   
   fTRUThreshold[mod][TRURow][branch] = threshold;
 }
+//________________________________________________________________
 void AliPHOSTriggerParameters::SetTRUMaskChannel(UShort_t mask, int mod, int TRURow, int branch)
 {
   // TODO: description
@@ -271,6 +310,7 @@ void AliPHOSTriggerParameters::SetTRUMaskChannel(UShort_t mask, int mod, int TRU
 
   fTRUMaskChannel[mod][TRURow][branch] = mask;
 }
+//________________________________________________________________
 void AliPHOSTriggerParameters::SetTORMaskArray(const UShort_t ma[3], int mod, int tor)
 {
   // TODO: description
@@ -282,6 +322,7 @@ void AliPHOSTriggerParameters::SetTORMaskArray(const UShort_t ma[3], int mod, in
   fTORMaskArray[mod][tor][1] = ma[1];
   fTORMaskArray[mod][tor][2] = ma[2];
 }
+//________________________________________________________________
 void AliPHOSTriggerParameters::SetTORReadoutMask(const UShort_t rm[2], int mod, int tor)
 {
   // TODO: description
@@ -294,7 +335,7 @@ void AliPHOSTriggerParameters::SetTORReadoutMask(const UShort_t rm[2], int mod, 
 }
 
 
-
+//________________________________________________________________
 void AliPHOSTriggerParameters::Print(Option_t *option) const
 {
   // Will Write uppon request (Henrik Qvigstad <henrik.qvigstad@cern.ch>)
@@ -302,7 +343,7 @@ void AliPHOSTriggerParameters::Print(Option_t *option) const
     Printf("AliPHOSTriggerParameters::Print is not implemented.");
 }
 
-
+//________________________________________________________________
 void AliPHOSTriggerParameters::Reset()
 {
   // Resets the values to Null/Ideal

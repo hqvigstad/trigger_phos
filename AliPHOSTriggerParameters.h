@@ -4,7 +4,14 @@
 /* Copyright(c) 1998-1999, ALICE Experiment at CERN, All rights reserved. *
  * See cxx source for full Copyright notice                               */
 
+// Author: Henrik Qvigstad <henrik.qvigstad@cern.ch> 17/10-2011
 /* $Id$ */
+
+///////////////////////////////////////////////////////////////////////////////
+//                                                                           //
+// class for PHOS Trigger Parameters                                         //
+//                                                                           //
+///////////////////////////////////////////////////////////////////////////////
 
 
 #include "TNamed.h"
@@ -47,6 +54,7 @@ class AliPHOSTriggerParameters : public TNamed {
   virtual void Print(Option_t *option = "") const; 
   void Reset();
 
+  // Constants
   static const int kNMods = 5; // Number of PHOS Modules
   static const int kNTORs = 2; // Number of TORs per Module
   static const int kNTRURows = 4; // Number of TRU rows
@@ -67,10 +75,10 @@ class AliPHOSTriggerParameters : public TNamed {
   UShort_t fTRUMaskChannel[kNMods][kNTRURows][kNBranches]; // TRU Mask Channel
   
   // TOR Parameters:
-  UShort_t fTORMaskArray[kNMods][kNTORs][3];
-  UShort_t fTORReadoutMask[kNMods][kNTORs][2];
+  UShort_t fTORMaskArray[kNMods][kNTORs][3]; // TOR Mask Array
+  UShort_t fTORReadoutMask[kNMods][kNTORs][2]; // TOR Readout Mask
   
-  ClassDef(AliPHOSTriggerParameters, 0)
+  ClassDef(AliPHOSTriggerParameters, 0) // PHOS Trigger Parameters
 };
 
 #endif
