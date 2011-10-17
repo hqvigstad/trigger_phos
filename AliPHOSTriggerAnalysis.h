@@ -38,6 +38,7 @@ class AliPHOSTriggerAnalysis
   static bool Is4x4Saturated(AliPHOSEMCRawReader*, int mod, int TRURow, int branch, int xIdx, int zIdx, int satThreshold);
     
   
+  const static int kNMods = 5;
   const static int kNTRURows = 4;
   const static int kNBranches = 2;
   const static int kN2x2X = 64/2;

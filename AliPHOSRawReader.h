@@ -18,10 +18,15 @@ class AliPHOSRawReader
   AliPHOSEMCRawReader* GetLGReader() {return fLGReader;}
   AliPHOSTRURawReader* GetTRUReader() {return fTRUReader;}
 
+  
+  const static int kNMods = 5;
+  const static int kNTRURows = 4;
+  const static int kNBranches = 2;
+
  protected:
   AliPHOSEMCRawReader* fHGReader;
   AliPHOSEMCRawReader* fLGReader;
-  AliPHOSTRURawReader* fTRUReader;
+  AliPHOSTRURawReader* fTRUReaders[kNMods][kNTRURows][kNBranches];
 };
 
 #endif

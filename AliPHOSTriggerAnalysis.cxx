@@ -17,7 +17,7 @@ using namespace std;
 
 AliPHOSTriggerAnalysis::AliPHOSTriggerAnalysis()
   :fVerbose(0),
-   fModules(AliPHOSGeometry::GetInstance("PHOS","PHOS")->GetNModules(), false),
+   fModules(kNMods, false),
    fSaturationThreshold(950),
    fParameters(0),
    fHistograms(new AliPHOSTriggerAnalysisHistograms)
