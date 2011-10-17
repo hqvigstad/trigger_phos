@@ -28,8 +28,8 @@ class AliPHOSTriggerParameters : public TNamed {
   UShort_t GetTRUSignalTimeBinTo(int mod, int TRURow, int branch) const;
   UShort_t GetTRUThreshold(int mod, int TRURow, int branch) const;
   UShort_t GetTRUMaskChannel(int mod, int TRURow, int branch) const;
-  // MaskArrayType GetTORMaskArray(int mod, int tor) const;
-  // ReadoutMaskType GetTORReadoutMask(int mod, int tor) const;
+  const UShort_t* GetTORMaskArray(int mod, int tor) const;
+  const UShort_t* GetTORReadoutMask(int mod, int tor) const;
   
   
   // Setters
@@ -40,8 +40,8 @@ class AliPHOSTriggerParameters : public TNamed {
   void SetTRUSignalTimeBinTo(UShort_t toBin, int mod, int TRURow, int branch);
   void SetTRUThreshold(UShort_t threshold, int mod, int TRURow, int branch);
   void SetTRUMaskChannel(UShort_t mask, int mod, int TRURow, int branch);
-  // void SetTORMaskArray(MaskArrayType ma, int mod, int tor);
-  // void SetTORReadoutMask(ReadoutMaskType rm, int mod, int tor);
+  void SetTORMaskArray(const UShort_t ma[3], int mod, int tor);
+  void SetTORReadoutMask(const UShort_t rm[2], int mod, int tor);
   
   // Misc
   virtual void Print(Option_t *option = "") const; 
@@ -67,8 +67,8 @@ class AliPHOSTriggerParameters : public TNamed {
   UShort_t fTRUMaskChannel[kNMods][kNTRURows][kNBranches]; // TRU Mask Channel
   
   // TOR Parameters:
-  // MaskArrayType fTORMaskArray[kNMods][kNTORs];
-  // ReadoutMaskType fTORReadoutMask[kNMods][kNTORs];
+  UShort_t fTORMaskArray[kNMods][kNTORs][3];
+  UShort_t fTORReadoutMask[kNMods][kNTORs][2];
   
   ClassDef(AliPHOSTriggerParameters, 0)
 };

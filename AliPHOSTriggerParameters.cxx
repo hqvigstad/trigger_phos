@@ -168,14 +168,28 @@ UShort_t AliPHOSTriggerParameters::GetTRUMaskChannel(int mod, int TRURow, int br
 
   return fTRUMaskChannel[mod][TRURow][branch];
 }
-// MaskArrayType GetTORMaskArray(int mod, int tor) const
-// {
-//   return fTORMaskArray[mod][TRURow][branch];
-// }
-// ReadoutMaskType GetTORReadoutMask(int mod, int tor) const
-// {
-//   return fTORReadoutMask[mod][TRURow][branch];
-// }
+const UShort_t* AliPHOSTriggerParameters::GetTORMaskArray(int mod, int tor) const
+{
+  // TODO: description
+  //
+  // mod: [0,4], module index, clockwise, as of 2011 only 2:4 exists
+  // tor: [0,1], TOR index, rising in PHOS x direction
+  //
+  // returns a array of UShort_t of size 3.
+
+  return fTORMaskArray[mod][tor];
+}
+const UShort_t* AliPHOSTriggerParameters::GetTORReadoutMask(int mod, int tor) const
+{
+  // TODO: description
+  //
+  // mod: [0,4], module index, clockwise, as of 2011 only 2:4 exists
+  // tor: [0,1], TOR index, rising in PHOS x direction
+  //
+  // returns a array of UShort_t of size 2.
+
+  return fTORReadoutMask[mod][tor];
+}
 
 
 
@@ -257,14 +271,27 @@ void AliPHOSTriggerParameters::SetTRUMaskChannel(UShort_t mask, int mod, int TRU
 
   fTRUMaskChannel[mod][TRURow][branch] = mask;
 }
-// void AliPHOSTriggerParameters::SetTORMaskArray(MaskArrayType ma, int mod, int tor)
-// {
-//   fTORMaskArray[mod][tor] = ma;
-// }
-// void AliPHOSTriggerParameters::SetTORReadoutMask(ReadoutMaskType rm, int mod, int tor)
-// {
-//   fTORReadoutMask[mod][tor] = rm;
-// }
+void AliPHOSTriggerParameters::SetTORMaskArray(const UShort_t ma[3], int mod, int tor)
+{
+  // TODO: description
+  //
+  // mod: [0,4], module index, clockwise, as of 2011 only 2:4 exists
+  // tor: [0,1], TOR index, rising in PHOS x direction
+
+  fTORMaskArray[mod][tor][0] = ma[0];
+  fTORMaskArray[mod][tor][1] = ma[1];
+  fTORMaskArray[mod][tor][2] = ma[2];
+}
+void AliPHOSTriggerParameters::SetTORReadoutMask(const UShort_t rm[2], int mod, int tor)
+{
+  // TODO: description
+  //
+  // mod: [0,4], module index, clockwise, as of 2011 only 2:4 exists
+  // tor: [0,1], TOR index, rising in PHOS x direction
+  
+  fTORReadoutMask[mod][tor][0] = rm[0];
+  fTORReadoutMask[mod][tor][1] = rm[1];
+}
 
 
 
@@ -296,10 +323,13 @@ void AliPHOSTriggerParameters::Reset()
 	}
       }
     }
-    // for(int tor = 0; tor < kNTORs; tor++) {
-    //   fTORMaskArray[mod][tor] = 0;
-    //   fTORReadoutMask[mod][tor] = 0;
-    // }
+    for(int tor = 0; tor < kNTORs; tor++) {
+      fTORMaskArray[mod][tor][0] = 0;
+      fTORMaskArray[mod][tor][1] = 0;
+      fTORMaskArray[mod][tor][2] = 0;
+      fTORReadoutMask[mod][tor][0] = 0;
+      fTORReadoutMask[mod][tor][1] = 0;
+    }
   }
 }
 
