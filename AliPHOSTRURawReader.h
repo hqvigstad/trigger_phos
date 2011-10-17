@@ -1,28 +1,35 @@
-#ifndef ALIPHOSTRURAWREADER_H
-#define ALIPHOSTRURAWREADER_H
+#ifndef ALIPHOSTRUREGIONRAWREADER_H
+#define ALIPHOSTRUREGIONRAWREADER_H
 
 class AliCaloRawStreamV3;
-class AliPHOSTRURegionRawReader;
 
 #include <vector>
 using namespace std;
 
-class AliPHOSTRURawReader
+class AliPHOSTRURegionRawReader
 {
  public:
-  AliPHOSTRURawReader();
-  ~AliPHOSTRURawReader();
-  
-  AliPHOSTRURegionRawReader* GetTRURegion(int mod, int truRow, int branch);
+  AliPHOSTRURegionRawReader();
+  ~AliPHOSTRURegionRawReader();
+
+  Short_t GetTriggerSignal(int xIdx, int zIdx, int timeBin) const {return fSignals[xIdx][zIdx][timeBin];}
+  Short_t GetTriggerFlag(int xIdx, int zIdx, int timeBin) const {return fFlags[xIdx][zIdx][timeBin];}
+  bool IsActive() {return fActive;}
+  bool IsAcitve(int timeBin) {return fActiveTime[timeBin];}
   
   void ReadFromStream(AliCaloRawStreamV3* );
   void Reset();
   
  private:
-  vector<vector<vector< AliPHOSTRURegionRawReader* > > > fRegions; // [mod][truRow][branch]
-
+  vector<vector<vector< Short_t > > > fSignals; // 2x2 Trigger Signal Sum, [x][z][t]
+  vector<vector<vector< Bool_t > > > fFlags; // Trigger Flag, [x][z][t]
+  
+  bool fActive; // Active
+  vector<bool> fActiveTime; // Active [t]
+  
+  const static int kDefaultNTimeBins = 128;
   const static int kNTRURows = 4;
   const static int kNBranches = 2;
 };
 
-#endif 
+#endif
