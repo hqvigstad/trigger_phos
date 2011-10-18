@@ -5,7 +5,7 @@ class AliRawReaderChain;
 class AliPHOSTriggerAnalysisHistograms;
 class AliPHOSRawReader;
 class AliPHOSEMCRawReader;
-class AliPHOSTRURawReader;
+class AliPHOSTriggerRawReader;
 class AliPHOSTRUCalibData;
 class AliPHOSTriggerParameters;
 
@@ -29,11 +29,11 @@ class AliPHOSTriggerAnalysis
   void SetTriggerParameters(AliPHOSTriggerParameters* parameters) {fParameters = parameters;}
     
   static int Get2x2Signal(AliPHOSEMCRawReader*, int mod, int xIdx, int zIdx, int timeBin);
-  static int Get2x2Signal(AliPHOSTRURawReader*, AliPHOSTriggerParameters*, int mod, int xIdx, int zIdx, int timeBin);
+  static int Get2x2Signal(AliPHOSTriggerRawReader*, AliPHOSTriggerParameters*, int mod, int xIdx, int zIdx, int timeBin);
   static int Get2x2Max(AliPHOSEMCRawReader*, int mod, int xIdx, int zIdx);
-  static int Get2x2Max(AliPHOSTRURawReader*, AliPHOSTriggerParameters*, int mod, int xIdx, int zIdx);
+  static int Get2x2Max(AliPHOSTriggerRawReader*, AliPHOSTriggerParameters*, int mod, int xIdx, int zIdx);
   static int Get4x4Max(AliPHOSEMCRawReader*, int mod, int TRURow, int branch, int xIdx, int zIdx);
-  static int Get4x4Max(AliPHOSTRURawReader*, AliPHOSTriggerParameters*, int mod, int TRURow, int branch, int xIdx, int zIdx);
+  static int Get4x4Max(AliPHOSTriggerRawReader*, AliPHOSTriggerParameters*, int mod, int TRURow, int branch, int xIdx, int zIdx);
   static bool Is2x2Saturated(AliPHOSEMCRawReader*, int mod, int xIdx, int zIdx, int satThreshold);
   static bool Is4x4Saturated(AliPHOSEMCRawReader*, int mod, int TRURow, int branch, int xIdx, int zIdx, int satThreshold);
     
@@ -44,10 +44,11 @@ class AliPHOSTriggerAnalysis
   const static int kN2x2X = 64/2;
   const static int kN2x2Z = 56/2;
   const static int kN2x2XPrTRURow = kN2x2X / kNTRURows;
-  const static int kN2x2ZPrBranch = kN2x2X / kNBranches;
-  const static int kN4x4XPrTRURow = kN2x2XPrRow -1;
+  const static int kN2x2ZPrBranch = kN2x2Z / kNBranches;
+  const static int kN4x4XPrTRURow = kN2x2XPrTRURow -1;
   const static int kN4x4ZPrBranch = kN2x2ZPrBranch -1;
   const static int kNTRUTimeBins = 128;
+  const static int kNDefaultNEMCTimeBins = 62;
   
  protected:
   int fVerbose; // , level of verbosity, 0="silent", 1=moderately, 2=excessively 

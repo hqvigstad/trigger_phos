@@ -4,8 +4,8 @@
 #include "AliRawReaderChain.h"
 #include "AliPHOSRawReader.h"
 #include "AliPHOSEMCRawReader.h"
+#include "AliPHOSTriggerRawReader.h"
 #include "AliPHOSTRURawReader.h"
-#include "AliPHOSTRURegionRawReader.h"
 #include "AliPHOSTriggerParameters.h"
 
 #include "AliPHOSGeometry.h"
@@ -43,7 +43,7 @@ void AliPHOSTriggerAnalysis::ProcessEvent(AliPHOSRawReader* rawReader)
       for(int xIdx = 0; xIdx < kN2x2X; ++xIdx) {
 	for(int zIdx = 0; zIdx < kN2x2Z; ++zIdx) {
 	  // Get peak values
-	  const int TSmax = Get2x2Max(rawReader->GetTRUReader(), fParameters, mod, xIdx, zIdx);
+	  const int TSmax = Get2x2Max(rawReader->GetTriggerReader(), fParameters, mod, xIdx, zIdx);
 	  const int LGmax = Get2x2Max(rawReader->GetLGReader(), mod, xIdx, zIdx);
 	  const int HGmax = Get2x2Max(rawReader->GetHGReader(), mod, xIdx, zIdx);
 	  const bool HGSaturated = Is2x2Saturated(rawReader->GetHGReader(), mod, xIdx, zIdx, fSaturationThreshold);
@@ -61,13 +61,13 @@ void AliPHOSTriggerAnalysis::ProcessEvent(AliPHOSRawReader* rawReader)
       // Loop over 4x4 cells
       for(int TRURow = 0; TRURow < kNTRURows; ++TRURow) {
 	for(int branch = 0; branch < kNBranches; ++branch) {
-	  for(int xIdx=0; xIdx < n4x4XPrTRURow; ++xIdx) {
-	    for(int zIdx=0; zIdx < n4x4ZPrBranch; ++zIdx) {
+	  for(int xIdx=0; xIdx < kN4x4XPrTRURow; ++xIdx) {
+	    for(int zIdx=0; zIdx < kN4x4ZPrBranch; ++zIdx) {
 
 	      // Determin if Trigger is flagged for any timeBin
 	      bool triggered = false;
-	      for(int timeBin; timeBin < kNTimeBins; ++timeBin){
-		if( rawReader->GetTRUReader()->GetTRURegion(mod, TRURow, branch)->GetTriggerFlag(xIdx, zIdx, timeBin) ){
+	      for(int timeBin; timeBin < kNTRUTimeBins; ++timeBin){
+		if( rawReader->GetTriggerReader()->GetTRU(mod, TRURow, branch)->GetTriggerFlag(xIdx, zIdx, timeBin) ){
 		  triggered = true;
 		  fHistograms->GetTriggerTime()->Fill(timeBin);
 		} // end "if TriggerBit"
@@ -75,7 +75,7 @@ void AliPHOSTriggerAnalysis::ProcessEvent(AliPHOSRawReader* rawReader)
 
 	      if( triggered ){
 		// Get peak values
-		const int TSmax = Get4x4Max(rawReader->GetTRUReader(), fParameters, mod, TRURow, branch, xIdx, zIdx);
+		const int TSmax = Get4x4Max(rawReader->GetTriggerReader(), fParameters, mod, TRURow, branch, xIdx, zIdx);
 		const int LGmax = Get4x4Max(rawReader->GetLGReader(), mod, TRURow, branch, xIdx, zIdx);
 		const int HGmax = Get4x4Max(rawReader->GetHGReader(), mod, TRURow, branch, xIdx, zIdx);
 		const bool HGSaturated = Is4x4Saturated(rawReader->GetHGReader(), mod, TRURow, branch, xIdx, zIdx, fSaturationThreshold );
@@ -108,14 +108,14 @@ int AliPHOSTriggerAnalysis::Get2x2Signal(AliPHOSEMCRawReader* reader, int mod, i
 }
 
 
-int AliPHOSTriggerAnalysis::Get2x2Signal(AliPHOSTRURawReader* reader, AliPHOSTriggerParameters* parameters, int mod, int xIdx, int zIdx, int timeBin)
+int AliPHOSTriggerAnalysis::Get2x2Signal(AliPHOSTriggerRawReader* reader, AliPHOSTriggerParameters* parameters, int mod, int xIdx, int zIdx, int timeBin)
 {
   const int RCURow = xIdx / kN2x2XPrTRURow;
   const int branch = zIdx / kN2x2ZPrBranch;
   const int RCUX = xIdx % kN2x2XPrTRURow; // 2x2 coordinates
   const int RCUZ = zIdx % kN2x2ZPrBranch; // 2x2 coordinates
 
-  const Short_t signal = reader->GetTRURegion(mod, RCURow, branch)->GetTriggerSignal( RCUX, RCUZ, timeBin);
+  const Short_t signal = reader->GetTRU(mod, RCURow, branch)->GetTriggerSignal( RCUX, RCUZ, timeBin);
   if(parameters)
     return signal - parameters->GetTRUPedestal(mod, RCURow, branch, RCUX, RCUZ);
   else
@@ -126,7 +126,7 @@ int AliPHOSTriggerAnalysis::Get2x2Signal(AliPHOSTRURawReader* reader, AliPHOSTri
 int AliPHOSTriggerAnalysis::Get2x2Max(AliPHOSEMCRawReader* reader, int mod, int xIdx, int zIdx)
 {
   int max = 0;
-  for(int timeBin = 0; timeBin < kNTimeBins; ++timeBin) {
+  for(int timeBin = 0; timeBin < kNDefaultNEMCTimeBins; ++timeBin) {
     const int signal = Get2x2Signal(reader, mod, xIdx, zIdx, timeBin);
     if( max < signal ){
       max = signal;
@@ -136,10 +136,10 @@ int AliPHOSTriggerAnalysis::Get2x2Max(AliPHOSEMCRawReader* reader, int mod, int 
 }
 
 
-int AliPHOSTriggerAnalysis::Get2x2Max(AliPHOSTRURawReader* reader, AliPHOSTriggerParameters* params, int mod, int xIdx, int zIdx)
+int AliPHOSTriggerAnalysis::Get2x2Max(AliPHOSTriggerRawReader* reader, AliPHOSTriggerParameters* params, int mod, int xIdx, int zIdx)
 {
   int max = 0;
-  for(int timeBin = 0; timeBin < kNTimeBins; ++timeBin) {
+  for(int timeBin = 0; timeBin < kNTRUTimeBins; ++timeBin) {
     const int signal = Get2x2Signal(reader, params, mod, xIdx, zIdx, timeBin);
     if( max < signal ){
       max = signal;
@@ -149,13 +149,13 @@ int AliPHOSTriggerAnalysis::Get2x2Max(AliPHOSTRURawReader* reader, AliPHOSTrigge
 }
 
 
-int AliPHOSTriggerAnalysis::Get4x4Max(AliPHOSTRURawReader* reader, AliPHOSTriggerParameters* params, int mod, int TRURow, int branch, int xIdx, int zIdx)
+int AliPHOSTriggerAnalysis::Get4x4Max(AliPHOSTriggerRawReader* reader, AliPHOSTriggerParameters* params, int mod, int TRURow, int branch, int xIdx, int zIdx)
 {
   int modX = xIdx + TRURow * (AliPHOSGeometry::GetInstance()->GetNPhi() / kNTRURows) /2;
   int modZ = zIdx + branch * (AliPHOSGeometry::GetInstance()->GetNZ() / kNBranches) /2;
 
   int max = 0;
-  for(int timeBin = 0; timeBin < kNTimeBins; ++timeBin) {
+  for(int timeBin = 0; timeBin < kNTRUTimeBins; ++timeBin) {
     const int signal
       = Get2x2Signal(reader, params, mod, modX  , modZ  , timeBin)
       + Get2x2Signal(reader, params, mod, modX+1, modZ  , timeBin)
@@ -175,7 +175,7 @@ int AliPHOSTriggerAnalysis::Get4x4Max(AliPHOSEMCRawReader* reader, int mod, int 
   int modZ = zIdx + branch * (AliPHOSGeometry::GetInstance()->GetNZ() / kNBranches) /2;
   
   int max = 0;
-  for(int timeBin = 0; timeBin < kNTimeBins; ++timeBin) {
+  for(int timeBin = 0; timeBin < kNDefaultNEMCTimeBins; ++timeBin) {
     const int signal
       = Get2x2Signal(reader, mod, modX  , modZ  , timeBin)
       + Get2x2Signal(reader, mod, modX+1, modZ  , timeBin)
@@ -189,9 +189,10 @@ int AliPHOSTriggerAnalysis::Get4x4Max(AliPHOSEMCRawReader* reader, int mod, int 
 }
 
 
+
 bool AliPHOSTriggerAnalysis::Is2x2Saturated(AliPHOSEMCRawReader* reader, int mod, int xIdx, int zIdx, int satThreshold)
 {
-  for(int timeBin = 0; timeBin < kNTimeBins; ++timeBin) {
+  for(int timeBin = 0; timeBin < kNDefaultNEMCTimeBins; ++timeBin) {
     // if any of the 4 signal above threshold:
     if( satThreshold <= reader->GetSignal(mod, xIdx*2  , zIdx*2  , timeBin) ||
 	satThreshold <= reader->GetSignal(mod, xIdx*2+1, zIdx*2  , timeBin) ||

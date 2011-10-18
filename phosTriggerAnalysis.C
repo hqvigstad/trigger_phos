@@ -82,8 +82,8 @@ void analyseRawChain(TChain* chain)
   delete phosRawStream;
   delete phosRawReader;
   
-  rawAnalysisCINT7->SaveResults("rawResultsCINT7.root");
-  rawAnalysisCPHI7->SaveResults("rawResultsCPHI7.root");
+  rawAnalysisCINT7->SaveResults("triggerResultsCINT7.root");
+  rawAnalysisCPHI7->SaveResults("triggerResultsCPHI7.root");
 }
 
 

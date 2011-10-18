@@ -2,7 +2,7 @@
 #define ALIPHOSRAWREADER_H
 
 class AliPHOSEMCRawReader;
-class AliPHOSTRURawReader;
+class AliPHOSTriggerRawReader;
 
 class AliCaloRawStreamV3;
 
@@ -16,7 +16,7 @@ class AliPHOSRawReader
 
   AliPHOSEMCRawReader* GetHGReader() {return fHGReader;}
   AliPHOSEMCRawReader* GetLGReader() {return fLGReader;}
-  AliPHOSTRURawReader* GetTRUReader() {return fTRUReader;}
+  AliPHOSTriggerRawReader* GetTriggerReader() {return fTriggerReader;}
 
   
   const static int kNMods = 5;
@@ -26,7 +26,7 @@ class AliPHOSRawReader
  protected:
   AliPHOSEMCRawReader* fHGReader;
   AliPHOSEMCRawReader* fLGReader;
-  AliPHOSTRURawReader* fTRUReaders[kNMods][kNTRURows][kNBranches];
+  AliPHOSTriggerRawReader* fTriggerReader;
 };
 
 #endif

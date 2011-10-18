@@ -2,25 +2,26 @@
 #define ALIPHOSTRURAWREADER_H
 
 class AliCaloRawStreamV3;
-class AliPHOSTRURegionRawReader;
+class AliPHOSTRURawReader;
 
 #include <vector>
 using namespace std;
 
-class AliPHOSTRURawReader
+class AliPHOSTriggerRawReader
 {
  public:
-  AliPHOSTRURawReader();
-  ~AliPHOSTRURawReader();
+  AliPHOSTriggerRawReader();
+  ~AliPHOSTriggerRawReader();
   
-  AliPHOSTRURegionRawReader* GetTRURegion(int mod, int truRow, int branch);
+  AliPHOSTRURawReader* GetTRU(int mod, int truRow, int branch);
   
   void ReadFromStream(AliCaloRawStreamV3* );
   void Reset();
   
  private:
-  vector<vector<vector< AliPHOSTRURegionRawReader* > > > fRegions; // [mod][truRow][branch]
+  vector<vector<vector< AliPHOSTRURawReader* > > > fTRUs; // [mod][truRow][branch]
 
+  const static int kNMods = 5;
   const static int kNTRURows = 4;
   const static int kNBranches = 2;
 };
