@@ -19,8 +19,8 @@ class AliPHOSTriggerAnalysisHistograms
   TH1I* GetTriggerTime();
   TH2I* GetTriggeredSWLGTSPeakCorrelation();
   TH2I* GetTriggeredSWHGTSPeakCorrelation();
-  TH2I* GetTriggeredSWHGTSPeakRatio();
   TH2I* GetTriggeredSWHGTSPeakCorrelationUS();
+  TH2I* GetTriggeredSWHGTSPeakRatio();
   
   void SaveResults(TString filename, TString options = "RECREATE");
 

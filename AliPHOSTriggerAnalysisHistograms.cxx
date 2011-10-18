@@ -27,7 +27,7 @@ TH2I* AliPHOSTriggerAnalysisHistograms::GetLGTSPeakCorrelation()
 {
   if( ! fLGTSPeakCorrelation ) {
     fLGTSPeakCorrelation = new TH2I("fLGTSPeakCorrelation", "LG-TS Peak Correlation", 
-				    4092/4, 0, 4092,  4092/4, 0, 4092);
+				    4092/4, 0, 4092,  1024/4, 0, 1024);
     fLGTSPeakCorrelation->GetXaxis()->SetTitle("LG 2x2");
     fLGTSPeakCorrelation->GetYaxis()->SetTitle("TS 2x2");
   }
@@ -38,7 +38,7 @@ TH2I* AliPHOSTriggerAnalysisHistograms::GetHGTSPeakCorrelation()
 {
   if( ! fHGTSPeakCorrelation ) {
     fHGTSPeakCorrelation = new TH2I("fHGTSPeakCorrelation", "HG-TS Peak Correlation", 
-				    4092/4, 0, 4092,  4092/4, 0, 4092);
+				    4092/4, 0, 4092,  1024/4, 0, 1024);
     fHGTSPeakCorrelation->GetXaxis()->SetTitle("HG 2x2");
     fHGTSPeakCorrelation->GetYaxis()->SetTitle("TS 2x2");
   }
@@ -62,7 +62,7 @@ TH2I* AliPHOSTriggerAnalysisHistograms::GetHGTSPeakCorrelationUS()
 {
   if( ! fHGTSPeakCorrelationUS ) {
     fHGTSPeakCorrelationUS = new TH2I("fHGTSPeakCorrelationUS", "HG-TS Peak Correlation, UnSaturated", 
-				    4092, 0, 4092/4,  4092, 0, 4092/4);
+				    4092/4, 0, 4092,  1024, 0, 1024);
     fHGTSPeakCorrelationUS->GetXaxis()->SetTitle("HG 2x2");
     fHGTSPeakCorrelationUS->GetYaxis()->SetTitle("TS 2x2");
   }
@@ -86,7 +86,7 @@ TH2I* AliPHOSTriggerAnalysisHistograms::GetTriggeredSWLGTSPeakCorrelation()
   if( ! fTriggeredSWLGTSPeakCorrelation ) {
     fTriggeredSWLGTSPeakCorrelation = new TH2I("fTriggeredSWLGTSPeakCorrelation", 
 					       "Triggered Sliding Windows LG-TS Peak Correlation", 
-					       16368/4/4, 0, 16368,  16368/4/4, 0, 16368);
+					       16368/4/4, 0, 16368,  4092/4, 0, 4092);
     fTriggeredSWLGTSPeakCorrelation->GetXaxis()->SetTitle("LG 4x4");
     fTriggeredSWLGTSPeakCorrelation->GetYaxis()->SetTitle("TS 4x4");
   }
@@ -99,24 +99,11 @@ TH2I* AliPHOSTriggerAnalysisHistograms::GetTriggeredSWHGTSPeakCorrelation()
   if( ! fTriggeredSWLGTSPeakCorrelation ) {
     fTriggeredSWLGTSPeakCorrelation = new TH2I("fTriggeredSWLGTSPeakCorrelation", 
 					       "Triggered Sliding Windows LG-TS Peak Correlation", 
-					       16368/4/4, 0, 16368,  16368/4/4, 0, 16368);
+					       16368/4/4, 0, 16368,  4092/4, 0, 4092);
     fTriggeredSWLGTSPeakCorrelation->GetXaxis()->SetTitle("LG 4x4");
     fTriggeredSWLGTSPeakCorrelation->GetYaxis()->SetTitle("TS 4x4");
   }
   return fTriggeredSWLGTSPeakCorrelation;
-}
-
-
-TH2I* AliPHOSTriggerAnalysisHistograms::GetTriggeredSWHGTSPeakRatio()
-{
-  if( ! fTriggeredSWHGTSPeakRatio ) {
-    fTriggeredSWHGTSPeakRatio = new TH2I("fTriggeredSWHGTSPeakRatio", 
-					 "Triggered Sliding Window HG-TS Peak Ratio", 
-					 16368/4/4, 0, 16368,  1000, 0, 20);
-    fTriggeredSWHGTSPeakRatio->GetXaxis()->SetTitle("TS 2x2");
-    fTriggeredSWHGTSPeakRatio->GetYaxis()->SetTitle("HG 2x2 / TS 2x2");
-  }
-  return fTriggeredSWHGTSPeakRatio;
 }
 
 
@@ -125,12 +112,27 @@ TH2I* AliPHOSTriggerAnalysisHistograms::GetTriggeredSWHGTSPeakCorrelationUS()
   if( ! fTriggeredSWHGTSPeakCorrelationUS ) {
     fTriggeredSWHGTSPeakCorrelationUS = new TH2I("fTriggeredSWHGTSPeakCorrelationUS", 
 					       "Triggered Sliding Windows HG-TS Peak Correlation, UnSaturated", 
-					       16368/4/4, 0, 16368,  16368/4/4, 0, 16368);
+					       16368/4/4, 0, 16368,  4092/4, 0, 4092);
     fTriggeredSWHGTSPeakCorrelationUS->GetXaxis()->SetTitle("HG 4x4");
     fTriggeredSWHGTSPeakCorrelationUS->GetYaxis()->SetTitle("TS 4x4");
   }
   return fTriggeredSWHGTSPeakCorrelationUS;
 }
+
+
+TH2I* AliPHOSTriggerAnalysisHistograms::GetTriggeredSWHGTSPeakRatio()
+{
+  if( ! fTriggeredSWHGTSPeakRatio ) {
+    fTriggeredSWHGTSPeakRatio = new TH2I("fTriggeredSWHGTSPeakRatio", 
+					 "Triggered Sliding Window HG-TS Peak Ratio", 
+					 4092/4, 0, 4092,  1000, 0, 20);
+    fTriggeredSWHGTSPeakRatio->GetXaxis()->SetTitle("TS 2x2");
+    fTriggeredSWHGTSPeakRatio->GetYaxis()->SetTitle("HG 2x2 / TS 2x2");
+  }
+  return fTriggeredSWHGTSPeakRatio;
+}
+
+
 
 
 void AliPHOSTriggerAnalysisHistograms::SaveResults(TString fileName, TString options)
