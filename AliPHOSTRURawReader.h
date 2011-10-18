@@ -13,7 +13,7 @@ class AliPHOSTRURawReader
   ~AliPHOSTRURawReader();
 
   Short_t GetTriggerSignal(int xIdx, int zIdx, int timeBin) const {return fSignals[xIdx][zIdx][timeBin];}
-  Short_t GetTriggerFlag(int xIdx, int zIdx, int timeBin) const {return fFlags[xIdx][zIdx][timeBin];}
+  Bool_t GetTriggerFlag(int xIdx, int zIdx, int timeBin) const {return fFlags[xIdx][zIdx][timeBin];}
   bool IsActive() {return fActive;}
   bool IsAcitve(int timeBin) {return fActiveTime[timeBin];}
   
