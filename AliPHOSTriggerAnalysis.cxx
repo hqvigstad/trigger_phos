@@ -61,12 +61,12 @@ void AliPHOSTriggerAnalysis::ProcessEvent(AliPHOSRawReader* rawReader)
       // Loop over 4x4 cells
       for(int TRURow = 0; TRURow < kNTRURows; ++TRURow) {
 	for(int branch = 0; branch < kNBranches; ++branch) {
-	  for(int xIdx=0; xIdx < kN4x4XPrTRURow; ++xIdx) {
-	    for(int zIdx=0; zIdx < kN4x4ZPrBranch; ++zIdx) {
+	  for(int xIdx = 0; xIdx < kN4x4XPrTRURow; ++xIdx) {
+	    for(int zIdx = 0; zIdx < kN4x4ZPrBranch; ++zIdx) {
 
 	      // Determin if Trigger is flagged for any timeBin
 	      bool triggered = false;
-	      for(int timeBin; timeBin < kNTRUTimeBins; ++timeBin){
+	      for(int timeBin = 0; timeBin < kNTRUTimeBins; ++timeBin){
 		if( rawReader->GetTriggerReader()->GetTRU(mod, TRURow, branch)->GetTriggerFlag(xIdx, zIdx, timeBin) ){
 		  triggered = true;
 		  fHistograms->GetTriggerTime()->Fill(timeBin);
