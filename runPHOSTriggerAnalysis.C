@@ -1,4 +1,4 @@
-void runPHOSTriggerAnalysis()
+void runPHOSTriggerAnalysis(char* filesList = "files.txt")
 {
   gSystem->AddIncludePath("-I$ALICE_ROOT/include");
   gSystem->AddIncludePath("-I$ALICE_ROOT/RAW");
@@ -19,5 +19,5 @@ void runPHOSTriggerAnalysis()
   
   
   TGrid::Connect("alien://");
-  phosTriggerAnalysis("files.txt");
+  phosTriggerAnalysis(filesList);
 }
