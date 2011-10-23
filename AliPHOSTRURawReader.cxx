@@ -16,7 +16,7 @@ AliPHOSTRURawReader::AliPHOSTRURawReader()
     fActiveTime(kNTimeBins, false)
 {
   // fSignals:
-  vector<Short_t> sTime(kNTimeBins, 0);
+  vector<Short_t> sTime(kNTimeBins, kDefaultSignalValue);
   vector<vector<Short_t> > sZ(kN2x2ZPrBranch, sTime);
   fSignals = vector<vector<vector<Short_t> > >(kN2x2XPrTRURow, sZ);
 
@@ -50,7 +50,7 @@ void AliPHOSTRURawReader::ReadFromStream(AliCaloRawStreamV3* rawStream)
     const bitset<10> word(signal[wIdx]);
     for(int bIdx = 0; bIdx < 10; ++bIdx) { // bits
       //const int index = 119 - (wIdx*10 + (9-bi)); // index used in TRU documentation,
-      const int index = 110 + bIdx - wIdx*10; // equivalent
+      const int index = (110 - wIdx*10) + bIdx; // equivalent
 	if( index < 91 ) { // we are only interrested in these words/bits
 	  const int xIdx = index % 7; // x index in TRU internal 2x2 coordinate system
 	  const int zIdx = index / 7; // z index in TRU internal 2x2 coordinate system
@@ -68,6 +68,9 @@ void AliPHOSTRURawReader::ReadFromStream(AliCaloRawStreamV3* rawStream)
    * We read the signal as following. */
 
   // if( 16 < signalLength ) {
+  if(signalLength != 16 && signalLength != 16+112)
+    cout << "Warning, AliPHOSTRURawReader::ReadFromStream, signalLength: "
+	 << signalLength << ", reader logic may not be valid." << endl;
   if( 16+112 == signalLength) {
     for (Int_t idx = 0; idx < 112; idx++)
       {
@@ -89,7 +92,7 @@ void AliPHOSTRURawReader::Reset()
     if( fActiveTime[timeBin] ) {
       for(int xIdx = 0; xIdx < kN2x2XPrTRURow; ++xIdx) {
 	for(int zIdx = 0; zIdx < kN2x2ZPrBranch; ++zIdx) {
-	  fSignals[xIdx][zIdx][timeBin] = 0;
+	  fSignals[xIdx][zIdx][timeBin] = kDefaultSignalValue;
 	} // zIdx
       } // xIdx
       for(int xIdx = 0; xIdx < kN4x4XPrTRURow; ++xIdx) {

@@ -86,7 +86,7 @@ TH2I* AliPHOSTriggerAnalysisHistograms::GetTriggeredSWLGTSPeakCorrelation()
   if( ! fTriggeredSWLGTSPeakCorrelation ) {
     fTriggeredSWLGTSPeakCorrelation = new TH2I("fTriggeredSWLGTSPeakCorrelation", 
 					       "Triggered Sliding Windows LG-TS Peak Correlation", 
-					       16368/4/4, 0, 16368,  4092/4, 0, 4092);
+					       16368/4, 0, 16368,  4092/4, 0, 4092);
     fTriggeredSWLGTSPeakCorrelation->GetXaxis()->SetTitle("LG 4x4");
     fTriggeredSWLGTSPeakCorrelation->GetYaxis()->SetTitle("TS 4x4");
   }
@@ -96,14 +96,14 @@ TH2I* AliPHOSTriggerAnalysisHistograms::GetTriggeredSWLGTSPeakCorrelation()
 
 TH2I* AliPHOSTriggerAnalysisHistograms::GetTriggeredSWHGTSPeakCorrelation()
 {
-  if( ! fTriggeredSWLGTSPeakCorrelation ) {
-    fTriggeredSWLGTSPeakCorrelation = new TH2I("fTriggeredSWLGTSPeakCorrelation", 
-					       "Triggered Sliding Windows LG-TS Peak Correlation", 
-					       16368/4/4, 0, 16368,  4092/4, 0, 4092);
-    fTriggeredSWLGTSPeakCorrelation->GetXaxis()->SetTitle("LG 4x4");
-    fTriggeredSWLGTSPeakCorrelation->GetYaxis()->SetTitle("TS 4x4");
+  if( ! fTriggeredSWHGTSPeakCorrelation ) {
+    fTriggeredSWHGTSPeakCorrelation = new TH2I("fTriggeredSWHGTSPeakCorrelation", 
+					       "Triggered Sliding Windows HG-TS Peak Correlation", 
+					       16368/4, 0, 16368,  4092/4, 0, 4092);
+    fTriggeredSWHGTSPeakCorrelation->GetXaxis()->SetTitle("HG 4x4");
+    fTriggeredSWHGTSPeakCorrelation->GetYaxis()->SetTitle("TS 4x4");
   }
-  return fTriggeredSWLGTSPeakCorrelation;
+  return fTriggeredSWHGTSPeakCorrelation;
 }
 
 
@@ -112,7 +112,7 @@ TH2I* AliPHOSTriggerAnalysisHistograms::GetTriggeredSWHGTSPeakCorrelationUS()
   if( ! fTriggeredSWHGTSPeakCorrelationUS ) {
     fTriggeredSWHGTSPeakCorrelationUS = new TH2I("fTriggeredSWHGTSPeakCorrelationUS", 
 					       "Triggered Sliding Windows HG-TS Peak Correlation, UnSaturated", 
-					       16368/4/4, 0, 16368,  4092/4, 0, 4092);
+					       16368/4, 0, 16368,  4092/4, 0, 4092);
     fTriggeredSWHGTSPeakCorrelationUS->GetXaxis()->SetTitle("HG 4x4");
     fTriggeredSWHGTSPeakCorrelationUS->GetYaxis()->SetTitle("TS 4x4");
   }
@@ -147,8 +147,8 @@ void AliPHOSTriggerAnalysisHistograms::SaveResults(TString fileName, TString opt
   GetTriggerTime()->Write();
   GetTriggeredSWLGTSPeakCorrelation()->Write();
   GetTriggeredSWHGTSPeakCorrelation()->Write();
-  GetTriggeredSWHGTSPeakRatio()->Write();
   GetTriggeredSWHGTSPeakCorrelationUS()->Write();
+  GetTriggeredSWHGTSPeakRatio()->Write();
 
   file->Close();
 }

@@ -11,6 +11,7 @@
 #include "AliPHOSGeometry.h"
 #include "TH1I.h"
 #include "TH2I.h"
+#include "TCanvas.h"
 
 #include <iostream>
 using namespace std;
@@ -97,31 +98,6 @@ void AliPHOSTriggerAnalysis::ProcessEvent(AliPHOSRawReader* rawReader)
 }
 
 
-int AliPHOSTriggerAnalysis::Get2x2Signal(AliPHOSEMCRawReader* reader, int mod, int xIdx, int zIdx, int timeBin)
-{
-  const Short_t signal
-    = reader->GetSignal(mod, xIdx*2  , zIdx*2  , timeBin)
-    + reader->GetSignal(mod, xIdx*2+1, zIdx*2  , timeBin)
-    + reader->GetSignal(mod, xIdx*2  , zIdx*2+1, timeBin)
-    + reader->GetSignal(mod, xIdx*2+1, zIdx*2+1, timeBin);
-  return signal;
-}
-
-
-int AliPHOSTriggerAnalysis::Get2x2Signal(AliPHOSTriggerRawReader* reader, AliPHOSTriggerParameters* parameters, int mod, int xIdx, int zIdx, int timeBin)
-{
-  const int RCURow = xIdx / kN2x2XPrTRURow;
-  const int branch = zIdx / kN2x2ZPrBranch;
-  const int RCUX = xIdx % kN2x2XPrTRURow; // 2x2 coordinates
-  const int RCUZ = zIdx % kN2x2ZPrBranch; // 2x2 coordinates
-
-  const Short_t signal = reader->GetTRU(mod, RCURow, branch)->GetTriggerSignal( RCUX, RCUZ, timeBin);
-  if(parameters)
-    return signal - parameters->GetTRUPedestal(mod, RCURow, branch, RCUX, RCUZ);
-  else
-    return signal;
-}
-
 
 int AliPHOSTriggerAnalysis::Get2x2Max(AliPHOSEMCRawReader* reader, int mod, int xIdx, int zIdx)
 {
@@ -149,30 +125,42 @@ int AliPHOSTriggerAnalysis::Get2x2Max(AliPHOSTriggerRawReader* reader, AliPHOSTr
 }
 
 
-int AliPHOSTriggerAnalysis::Get4x4Max(AliPHOSTriggerRawReader* reader, AliPHOSTriggerParameters* params, int mod, int TRURow, int branch, int xIdx, int zIdx)
+int AliPHOSTriggerAnalysis::Get2x2Signal(AliPHOSEMCRawReader* reader, int mod, int xIdx, int zIdx, int timeBin)
 {
-  int modX = xIdx + TRURow * (AliPHOSGeometry::GetInstance()->GetNPhi() / kNTRURows) /2;
-  int modZ = zIdx + branch * (AliPHOSGeometry::GetInstance()->GetNZ() / kNBranches) /2;
-
-  int max = 0;
-  for(int timeBin = 0; timeBin < kNTRUTimeBins; ++timeBin) {
-    const int signal
-      = Get2x2Signal(reader, params, mod, modX  , modZ  , timeBin)
-      + Get2x2Signal(reader, params, mod, modX+1, modZ  , timeBin)
-      + Get2x2Signal(reader, params, mod, modX  , modZ+1, timeBin)
-      + Get2x2Signal(reader, params, mod, modX+1, modZ+1, timeBin);
-    if( max < signal ){
-      max = signal;
-    }
-  }
-  return max;
+  const Short_t signal
+    = reader->GetSignal(mod, xIdx*2  , zIdx*2  , timeBin)
+    + reader->GetSignal(mod, xIdx*2+1, zIdx*2  , timeBin)
+    + reader->GetSignal(mod, xIdx*2  , zIdx*2+1, timeBin)
+    + reader->GetSignal(mod, xIdx*2+1, zIdx*2+1, timeBin);
+  return signal;
 }
+
+
+int AliPHOSTriggerAnalysis::Get2x2Signal(AliPHOSTriggerRawReader* reader, AliPHOSTriggerParameters* parameters, int mod, int xIdx, int zIdx, int timeBin)
+{
+  const int TRURow = xIdx / kN2x2XPrTRURow;
+  const int branch = zIdx / kN2x2ZPrBranch;
+  const int TRUX = xIdx % kN2x2XPrTRURow; // 2x2 coordinates
+  const int TRUZ = zIdx % kN2x2ZPrBranch; // 2x2 coordinates
+  
+  if( reader->GetTRU(mod, TRURow, branch)->IsActive() ){
+    const int signal = reader->GetTRU(mod, TRURow, branch)->GetTriggerSignal( TRUX, TRUZ, timeBin);
+    if( parameters )
+      return signal - parameters->GetTRUPedestal(mod, TRURow, branch, TRUX, TRUZ);
+    else 
+      return signal - AliPHOSTRURawReader::kDefaultSignalValue;
+  }
+  else
+    return 0;
+}
+
+
 
 
 int AliPHOSTriggerAnalysis::Get4x4Max(AliPHOSEMCRawReader* reader, int mod, int TRURow, int branch, int xIdx, int zIdx)
 {
-  int modX = xIdx + TRURow * (AliPHOSGeometry::GetInstance()->GetNPhi() / kNTRURows) /2;
-  int modZ = zIdx + branch * (AliPHOSGeometry::GetInstance()->GetNZ() / kNBranches) /2;
+  const int modX = xIdx + TRURow * kN2x2XPrTRURow;
+  const int modZ = zIdx + branch * kN2x2ZPrBranch;
   
   int max = 0;
   for(int timeBin = 0; timeBin < kNDefaultNEMCTimeBins; ++timeBin) {
@@ -188,6 +176,32 @@ int AliPHOSTriggerAnalysis::Get4x4Max(AliPHOSEMCRawReader* reader, int mod, int 
   return max;
 }
 
+
+int AliPHOSTriggerAnalysis::Get4x4Max(AliPHOSTriggerRawReader* reader, AliPHOSTriggerParameters* params, int mod, int TRURow, int branch, int xIdx, int zIdx)
+{
+  int max = 0;
+  for(int timeBin = 0; timeBin < kNTRUTimeBins; ++timeBin) {
+    const int signal = Get4x4Signal(reader, params, mod, TRURow, branch, xIdx, zIdx, timeBin);
+    if( max < signal ){
+      max = signal;
+    }
+  }
+  return max;
+}
+
+
+int AliPHOSTriggerAnalysis::Get4x4Signal(AliPHOSTriggerRawReader* reader, AliPHOSTriggerParameters* params, int mod, int TRURow, int branch, int xIdx, int zIdx, int timeBin)
+{
+  const int modX = xIdx + TRURow * kN2x2XPrTRURow;
+  const int modZ = zIdx + branch * kN2x2ZPrBranch;
+
+  const int signal      
+    = Get2x2Signal(reader, params, mod, modX  , modZ  , timeBin)
+      + Get2x2Signal(reader, params, mod, modX+1, modZ  , timeBin)
+      + Get2x2Signal(reader, params, mod, modX  , modZ+1, timeBin)
+      + Get2x2Signal(reader, params, mod, modX+1, modZ+1, timeBin);
+  return signal;
+}
 
 
 bool AliPHOSTriggerAnalysis::Is2x2Saturated(AliPHOSEMCRawReader* reader, int mod, int xIdx, int zIdx, int satThreshold)
@@ -207,8 +221,9 @@ bool AliPHOSTriggerAnalysis::Is2x2Saturated(AliPHOSEMCRawReader* reader, int mod
 
 bool AliPHOSTriggerAnalysis::Is4x4Saturated(AliPHOSEMCRawReader* reader, int mod, int TRURow, int branch, int xIdx, int zIdx, int satThreshold)
 {
-  int modX = xIdx + TRURow * (AliPHOSGeometry::GetInstance()->GetNPhi() / kNTRURows) /2;
-  int modZ = zIdx + branch * (AliPHOSGeometry::GetInstance()->GetNZ() / kNBranches) /2;
+  const int modX = xIdx + TRURow * kN2x2XPrTRURow;
+  const int modZ = zIdx + branch * kN2x2ZPrBranch;
+
   return Is2x2Saturated(reader, mod, modX  , modZ  , satThreshold)
     ||   Is2x2Saturated(reader, mod, modX+1, modZ  , satThreshold)
     ||   Is2x2Saturated(reader, mod, modX  , modZ+1, satThreshold)
@@ -218,6 +233,8 @@ bool AliPHOSTriggerAnalysis::Is4x4Saturated(AliPHOSEMCRawReader* reader, int mod
 
 void AliPHOSTriggerAnalysis::SaveResults(TString filename) const
 {
+  new TCanvas;
+  fHistograms->GetHGTSPeakCorrelation()->DrawCopy("colz");
   fHistograms->SaveResults(filename);
 }
 

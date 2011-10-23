@@ -30,7 +30,8 @@ class AliPHOSTRURawReader
   const static int kN2x2ZPrBranch = kN2x2Z / kNBranches;
   const static int kN4x4XPrTRURow = kN2x2XPrTRURow -1;
   const static int kN4x4ZPrBranch = kN2x2ZPrBranch -1;
-
+  
+  const static int kDefaultSignalValue = 512;
 
  private:
   vector<vector<vector< Short_t > > > fSignals; // 2x2 Trigger Signal Sum, [x][z][t]

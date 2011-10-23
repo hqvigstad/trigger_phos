@@ -28,12 +28,13 @@ class AliPHOSTriggerAnalysis
   void SetVerbose(int vValue = 1) {fVerbose = vValue;}
   void SetTriggerParameters(AliPHOSTriggerParameters* parameters) {fParameters = parameters;}
     
-  static int Get2x2Signal(AliPHOSEMCRawReader*, int mod, int xIdx, int zIdx, int timeBin);
-  static int Get2x2Signal(AliPHOSTriggerRawReader*, AliPHOSTriggerParameters*, int mod, int xIdx, int zIdx, int timeBin);
   static int Get2x2Max(AliPHOSEMCRawReader*, int mod, int xIdx, int zIdx);
   static int Get2x2Max(AliPHOSTriggerRawReader*, AliPHOSTriggerParameters*, int mod, int xIdx, int zIdx);
+  static int Get2x2Signal(AliPHOSEMCRawReader*, int mod, int xIdx, int zIdx, int timeBin);
+  static int Get2x2Signal(AliPHOSTriggerRawReader*, AliPHOSTriggerParameters*, int mod, int xIdx, int zIdx, int timeBin);
   static int Get4x4Max(AliPHOSEMCRawReader*, int mod, int TRURow, int branch, int xIdx, int zIdx);
   static int Get4x4Max(AliPHOSTriggerRawReader*, AliPHOSTriggerParameters*, int mod, int TRURow, int branch, int xIdx, int zIdx);
+  static int Get4x4Signal(AliPHOSTriggerRawReader*, AliPHOSTriggerParameters*, int mod, int TRURow, int branch, int xIdx, int zIdx, int timeBin);
   static bool Is2x2Saturated(AliPHOSEMCRawReader*, int mod, int xIdx, int zIdx, int satThreshold);
   static bool Is4x4Saturated(AliPHOSEMCRawReader*, int mod, int TRURow, int branch, int xIdx, int zIdx, int satThreshold);
     

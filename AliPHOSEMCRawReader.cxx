@@ -22,6 +22,10 @@ AliPHOSEMCRawReader::AliPHOSEMCRawReader()
   fSignals = vector<vector<vector<vector<Short_t> > > >(nM, sX);
 
   fActive = vector<bool>(nM, false);
+
+  vector<bool> aZ(nZ, false);
+  vector<vector<bool> > aX(nX, aZ);
+  fActiveCell = vector<vector<vector<bool> > >(nM, aX);
 }
 
 AliPHOSEMCRawReader::~AliPHOSEMCRawReader()
@@ -37,8 +41,8 @@ void AliPHOSEMCRawReader::ReadFromStream(AliCaloRawStreamV3* rawStream)
     Int_t sigStart = rawStream->GetStartTimeBin();
     Int_t sigLength = rawStream->GetBunchLength();
     Int_t mod = rawStream->GetModule();
-    Int_t colx = rawStream->GetCellX();
-    Int_t rowz = rawStream->GetCellZ();
+    Int_t rowx = rawStream->GetCellX();
+    Int_t colz = rawStream->GetCellZ();
     UInt_t value = rawStream->GetAltroCFG1();
     Short_t offset=0,threshold=0;
     Bool_t ZeroSuppressionEnabled = (value >> 15) & 0x1;
@@ -51,12 +55,13 @@ void AliPHOSEMCRawReader::ReadFromStream(AliCaloRawStreamV3* rawStream)
     for (Int_t i = 0; i < sigLength; i++) {
       if((sigStart-i-3<64) and (sigStart-i-3 > 0))
 	{
-	  // fSignals[mod][colx][rowz-1][0]=sig[i]-offset;
-	  fSignals[mod][colx][rowz][sigStart-i-3] = sig[i]-offset;
+	  // fSignals[mod][rowx][colz-1][0]=sig[i]-offset;
+	  fSignals[mod][rowx][colz][sigStart-i-3] = sig[i]-offset;
 	}//-------------------???????????????//type?
     }
     
     fActive[mod] = true;
+    fActiveCell[mod][rowx][colz] = true;
   }
 }
   
@@ -68,13 +73,17 @@ void AliPHOSEMCRawReader::Reset()
 
   for(int mod = 0; mod < nM; ++mod) {
     if(fActive[mod]){
-      for(int rowx; rowx < nX; ++rowx) {
-	for(int colz; colz < nZ; ++colz) {
-	  for(unsigned int timeBin; timeBin < fSignals[mod][rowx][colz].size(); ++timeBin)
-	    fSignals[mod][rowx][colz][timeBin] = 0;
-	} // time
-      } // colz
-    } // rowx
-    fActive[mod];
+      for(int rowx = 0; rowx < nX; ++rowx) {
+	for(int colz = 0; colz < nZ; ++colz) {
+	  if( fActiveCell[mod][rowx][colz] ) {
+	    for(unsigned int timeBin = 0; timeBin < fSignals[mod][rowx][colz].size(); ++timeBin){
+	      fSignals[mod][rowx][colz][timeBin] = 0;
+	    } // time
+	    fActiveCell[mod][rowx][colz] = false;
+	  } // end if fActive Cell
+	} // colz
+      } // rowx 
+    } //end if fActive
+    fActive[mod] = false;
   } // mod
 }

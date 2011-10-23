@@ -20,6 +20,7 @@ class AliPHOSEMCRawReader
  private:
   vector<vector<vector<vector< Short_t > > > > fSignals; // [mod][x][z][t]
   vector<bool> fActive; // fActive[mod]
+  vector<vector<vector<bool> > > fActiveCell; // fActive[mod][x][z]
   
   const static Short_t kDefaultNTimeBins = 62;
 };
