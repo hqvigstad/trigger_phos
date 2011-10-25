@@ -12,6 +12,7 @@ class AliPHOSTriggerAnalysisHistograms
   AliPHOSTriggerAnalysisHistograms();
   ~AliPHOSTriggerAnalysisHistograms();
   
+  TH1I* GetTRUActive();
   TH2I* GetLGTSPeakCorrelation();
   TH2I* GetLGTSPeakCorrelationA();
   TH2I* GetHGTSPeakCorrelation();
@@ -26,7 +27,12 @@ class AliPHOSTriggerAnalysisHistograms
   
   void SaveResults(TString filename, TString options = "RECREATE");
 
+  const static int kNMods = 5;
+  const static int kNTRURows = 4;
+  const static int kNBranches = 2;
+
  protected:
+  TH1I* fTRUActive;
   TH2I* fLGTSPeakCorrelation;
   TH2I* fLGTSPeakCorrelationA;
   TH2I* fHGTSPeakCorrelation;

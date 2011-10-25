@@ -5,7 +5,8 @@
 #include "TFile.h"
 
 AliPHOSTriggerAnalysisHistograms::AliPHOSTriggerAnalysisHistograms()
-  : fLGTSPeakCorrelation(0),
+  : fTRUActive(0),
+    fLGTSPeakCorrelation(0),
     fLGTSPeakCorrelationA(0),
     fHGTSPeakCorrelation(0),
     fHGTSPeakCorrelationA(0),
@@ -22,6 +23,18 @@ AliPHOSTriggerAnalysisHistograms::AliPHOSTriggerAnalysisHistograms()
 
 AliPHOSTriggerAnalysisHistograms::~AliPHOSTriggerAnalysisHistograms()
 {
+}
+
+
+TH1I* AliPHOSTriggerAnalysisHistograms::GetTRUActive()
+{
+  if( ! fTRUActive ) {
+    int nBins = kNMods * kNTRURows * kNBranches;
+    fTRUActive = new TH1I("fTRUActive", "Active TRU Distribution", nBins, 0, nBins);
+    fTRUActive->GetXaxis()->SetTitle("Index (mod*nTRURows*nBranches + TRURow*nBranches + branch)");
+    fTRUActive->GetYaxis()->SetTitle("Count");
+  }
+  return fTRUActive;
 }
 
 
@@ -167,6 +180,7 @@ void AliPHOSTriggerAnalysisHistograms::SaveResults(TString fileName, TString opt
   TFile* file = new TFile(fileName, options);
   file->cd();
   
+  GetTRUActive()->Write();
   GetLGTSPeakCorrelation()->Write();
   GetHGTSPeakCorrelation()->Write();
   GetLGTSPeakCorrelationA()->Write();
