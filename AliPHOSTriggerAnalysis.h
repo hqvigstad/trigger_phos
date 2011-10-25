@@ -35,6 +35,10 @@ class AliPHOSTriggerAnalysis
   static int Get4x4Max(AliPHOSEMCRawReader*, int mod, int TRURow, int branch, int xIdx, int zIdx);
   static int Get4x4Max(AliPHOSTriggerRawReader*, AliPHOSTriggerParameters*, int mod, int TRURow, int branch, int xIdx, int zIdx);
   static int Get4x4Signal(AliPHOSTriggerRawReader*, AliPHOSTriggerParameters*, int mod, int TRURow, int branch, int xIdx, int zIdx, int timeBin);
+
+  static bool Is2x2Active(AliPHOSTriggerRawReader*, int mod, int xIdx, int zIdx);
+  static bool Is4x4Active(AliPHOSEMCRawReader*, int mod, int TRURow, int branch, int xIdx, int zIdx);
+
   static bool Is2x2Saturated(AliPHOSEMCRawReader*, int mod, int xIdx, int zIdx, int satThreshold);
   static bool Is4x4Saturated(AliPHOSEMCRawReader*, int mod, int TRURow, int branch, int xIdx, int zIdx, int satThreshold);
     

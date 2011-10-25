@@ -13,6 +13,7 @@ class AliPHOSEMCRawReader
   ~AliPHOSEMCRawReader();
 
   Short_t GetSignal(int mod, int rowx, int colz, int timeBin) {return fSignals[mod][rowx][colz][timeBin];}
+  Short_t IsActive(int mod, int rowx, int colz) {return fActiveCell[mod][rowx][colz];}
 
   void ReadFromStream(AliCaloRawStreamV3* );
   void Reset();

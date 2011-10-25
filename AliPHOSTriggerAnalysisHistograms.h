@@ -13,7 +13,9 @@ class AliPHOSTriggerAnalysisHistograms
   ~AliPHOSTriggerAnalysisHistograms();
   
   TH2I* GetLGTSPeakCorrelation();
+  TH2I* GetLGTSPeakCorrelationA();
   TH2I* GetHGTSPeakCorrelation();
+  TH2I* GetHGTSPeakCorrelationA();
   TH2I* GetHGTSPeakRatio();
   TH2I* GetHGTSPeakCorrelationUS();
   TH1I* GetTriggerTime();
@@ -26,7 +28,9 @@ class AliPHOSTriggerAnalysisHistograms
 
  protected:
   TH2I* fLGTSPeakCorrelation;
+  TH2I* fLGTSPeakCorrelationA;
   TH2I* fHGTSPeakCorrelation;
+  TH2I* fHGTSPeakCorrelationA;
   TH2I* fHGTSPeakRatio;
   TH2I* fHGTSPeakCorrelationUS;
   TH1I* fTriggerTime;

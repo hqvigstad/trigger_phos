@@ -36,19 +36,24 @@ AliPHOSTriggerAnalysis::~AliPHOSTriggerAnalysis()
 
 void AliPHOSTriggerAnalysis::ProcessEvent(AliPHOSRawReader* rawReader)
 {
+  AliPHOSEMCRawReader* readerLG = rawReader->GetLGReader();
+  AliPHOSEMCRawReader* readerHG = rawReader->GetHGReader();
+  AliPHOSTriggerRawReader* readerT = rawReader->GetTriggerReader();
+
   // Loop over modules
   for(unsigned int mod = 0; mod < fModules.size(); ++mod) {
     if( fModules[mod] ) {
-      
+
       // Loop over 2x2 cells
       for(int xIdx = 0; xIdx < kN2x2X; ++xIdx) {
 	for(int zIdx = 0; zIdx < kN2x2Z; ++zIdx) {
+
 	  // Get peak values
-	  const int TSmax = Get2x2Max(rawReader->GetTriggerReader(), fParameters, mod, xIdx, zIdx);
-	  const int LGmax = Get2x2Max(rawReader->GetLGReader(), mod, xIdx, zIdx);
-	  const int HGmax = Get2x2Max(rawReader->GetHGReader(), mod, xIdx, zIdx);
+	  const int TSmax = Get2x2Max(readerT, fParameters, mod, xIdx, zIdx);
+	  const int LGmax = Get2x2Max(readerLG, mod, xIdx, zIdx);
+	  const int HGmax = Get2x2Max(readerHG, mod, xIdx, zIdx);
 	  const bool HGSaturated = Is2x2Saturated(rawReader->GetHGReader(), mod, xIdx, zIdx, fSaturationThreshold);
-	  
+
 	  // Plot Values
 	  fHistograms->GetLGTSPeakCorrelation()->Fill(LGmax, TSmax);
 	  fHistograms->GetHGTSPeakCorrelation()->Fill(HGmax, TSmax);
@@ -56,6 +61,15 @@ void AliPHOSTriggerAnalysis::ProcessEvent(AliPHOSRawReader* rawReader)
 	    fHistograms->GetHGTSPeakRatio()->Fill( TSmax, ((double)HGmax) / TSmax );
 	  if( ! HGSaturated )
 	    fHistograms->GetHGTSPeakCorrelationUS()->Fill(HGmax, TSmax);
+
+	  // Plot Active Values
+	  if( Is2x2Active(readerT, mod, xIdx, zIdx) ){
+	    if( readerLG->IsActive(mod, xIdx, zIdx ) )
+	      fHistograms->GetLGTSPeakCorrelationA()->Fill(LGmax, TSmax);
+	    if( readerHG->IsActive(mod, xIdx, zIdx ) )
+	      fHistograms->GetHGTSPeakCorrelationA()->Fill(HGmax, TSmax);
+	  }
+
 	} // end zIdx loop
       } // end xIdx loop
 
@@ -101,14 +115,19 @@ void AliPHOSTriggerAnalysis::ProcessEvent(AliPHOSRawReader* rawReader)
 
 int AliPHOSTriggerAnalysis::Get2x2Max(AliPHOSEMCRawReader* reader, int mod, int xIdx, int zIdx)
 {
-  int max = 0;
-  for(int timeBin = 0; timeBin < kNDefaultNEMCTimeBins; ++timeBin) {
-    const int signal = Get2x2Signal(reader, mod, xIdx, zIdx, timeBin);
-    if( max < signal ){
-      max = signal;
+  if( reader->IsActive(mod, xIdx, zIdx )  ) {
+    int max = 0;
+    // find max:
+    for(int timeBin = 0; timeBin < kNDefaultNEMCTimeBins; ++timeBin) {
+      const int signal = Get2x2Signal(reader, mod, xIdx, zIdx, timeBin);
+      if( max < signal ){
+	max = signal;
+      }
     }
+    return max;
   }
-  return max;
+  else
+    return 0;
 }
 
 
@@ -142,12 +161,12 @@ int AliPHOSTriggerAnalysis::Get2x2Signal(AliPHOSTriggerRawReader* reader, AliPHO
   const int branch = zIdx / kN2x2ZPrBranch;
   const int TRUX = xIdx % kN2x2XPrTRURow; // 2x2 coordinates
   const int TRUZ = zIdx % kN2x2ZPrBranch; // 2x2 coordinates
-  
+
   if( reader->GetTRU(mod, TRURow, branch)->IsActive() ){
     const int signal = reader->GetTRU(mod, TRURow, branch)->GetTriggerSignal( TRUX, TRUZ, timeBin);
     if( parameters )
       return signal - parameters->GetTRUPedestal(mod, TRURow, branch, TRUX, TRUZ);
-    else 
+    else
       return signal - AliPHOSTRURawReader::kDefaultSignalValue;
   }
   else
@@ -161,7 +180,7 @@ int AliPHOSTriggerAnalysis::Get4x4Max(AliPHOSEMCRawReader* reader, int mod, int 
 {
   const int modX = xIdx + TRURow * kN2x2XPrTRURow;
   const int modZ = zIdx + branch * kN2x2ZPrBranch;
-  
+
   int max = 0;
   for(int timeBin = 0; timeBin < kNDefaultNEMCTimeBins; ++timeBin) {
     const int signal
@@ -195,12 +214,33 @@ int AliPHOSTriggerAnalysis::Get4x4Signal(AliPHOSTriggerRawReader* reader, AliPHO
   const int modX = xIdx + TRURow * kN2x2XPrTRURow;
   const int modZ = zIdx + branch * kN2x2ZPrBranch;
 
-  const int signal      
+  const int signal
     = Get2x2Signal(reader, params, mod, modX  , modZ  , timeBin)
       + Get2x2Signal(reader, params, mod, modX+1, modZ  , timeBin)
       + Get2x2Signal(reader, params, mod, modX  , modZ+1, timeBin)
       + Get2x2Signal(reader, params, mod, modX+1, modZ+1, timeBin);
   return signal;
+}
+
+
+bool AliPHOSTriggerAnalysis::Is2x2Active(AliPHOSTriggerRawReader* reader, int mod, int xIdx, int zIdx)
+{
+  const int TRURow = xIdx / kN2x2XPrTRURow;
+  const int branch = zIdx / kN2x2ZPrBranch;
+
+  return reader->GetTRU(mod, TRURow, branch)->IsActive();
+}
+
+
+bool AliPHOSTriggerAnalysis::Is4x4Active(AliPHOSEMCRawReader* reader, int mod, int TRURow, int branch, int xIdx, int zIdx)
+{
+  const int modX = xIdx + TRURow * kN2x2XPrTRURow;
+  const int modZ = zIdx + branch * kN2x2ZPrBranch;
+
+  return reader->IsActive(mod, modX  , modZ  )
+    &&   reader->IsActive(mod, modX+1, modZ  )
+    &&   reader->IsActive(mod, modX  , modZ+1)
+    &&   reader->IsActive(mod, modX+1, modZ+1);
 }
 
 
@@ -235,6 +275,9 @@ void AliPHOSTriggerAnalysis::SaveResults(TString filename) const
 {
   new TCanvas;
   fHistograms->GetHGTSPeakCorrelation()->DrawCopy("colz");
+  new TCanvas;
+  fHistograms->GetHGTSPeakCorrelationA()->DrawCopy("colz");
+  
   fHistograms->SaveResults(filename);
 }
 

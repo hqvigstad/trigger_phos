@@ -6,7 +6,9 @@
 
 AliPHOSTriggerAnalysisHistograms::AliPHOSTriggerAnalysisHistograms()
   : fLGTSPeakCorrelation(0),
+    fLGTSPeakCorrelationA(0),
     fHGTSPeakCorrelation(0),
+    fHGTSPeakCorrelationA(0),
     fHGTSPeakRatio(0),
     fHGTSPeakCorrelationUS(0),
     fTriggerTime(0),
@@ -34,6 +36,19 @@ TH2I* AliPHOSTriggerAnalysisHistograms::GetLGTSPeakCorrelation()
   return fLGTSPeakCorrelation;
 }
 
+
+TH2I* AliPHOSTriggerAnalysisHistograms::GetLGTSPeakCorrelationA()
+{
+  if( ! fLGTSPeakCorrelationA ) {
+    fLGTSPeakCorrelationA = new TH2I("fLGTSPeakCorrelationA", "LG-TS Peak Correlation, Active", 
+				    4092/4, 0, 4092,  1024/4, 0, 1024);
+    fLGTSPeakCorrelationA->GetXaxis()->SetTitle("LG 2x2");
+    fLGTSPeakCorrelationA->GetYaxis()->SetTitle("TS 2x2");
+  }
+  return fLGTSPeakCorrelationA;
+}
+
+
 TH2I* AliPHOSTriggerAnalysisHistograms::GetHGTSPeakCorrelation()
 {
   if( ! fHGTSPeakCorrelation ) {
@@ -43,6 +58,18 @@ TH2I* AliPHOSTriggerAnalysisHistograms::GetHGTSPeakCorrelation()
     fHGTSPeakCorrelation->GetYaxis()->SetTitle("TS 2x2");
   }
   return fHGTSPeakCorrelation;
+}
+
+
+TH2I* AliPHOSTriggerAnalysisHistograms::GetHGTSPeakCorrelationA()
+{
+  if( ! fHGTSPeakCorrelationA ) {
+    fHGTSPeakCorrelationA = new TH2I("fHGTSPeakCorrelationA", "HG-TS Peak Correlation, Active", 
+				    4092/4, 0, 4092,  1024/4, 0, 1024);
+    fHGTSPeakCorrelationA->GetXaxis()->SetTitle("HG 2x2");
+    fHGTSPeakCorrelationA->GetYaxis()->SetTitle("TS 2x2");
+  }
+  return fHGTSPeakCorrelationA;
 }
 
 
@@ -142,6 +169,8 @@ void AliPHOSTriggerAnalysisHistograms::SaveResults(TString fileName, TString opt
   
   GetLGTSPeakCorrelation()->Write();
   GetHGTSPeakCorrelation()->Write();
+  GetLGTSPeakCorrelationA()->Write();
+  GetHGTSPeakCorrelationA()->Write();
   GetHGTSPeakRatio()->Write();
   GetHGTSPeakCorrelationUS()->Write();
   GetTriggerTime()->Write();

@@ -5,7 +5,8 @@
 
 AliPHOSEMCRawReader::AliPHOSEMCRawReader()
   : fSignals(),
-    fActive()
+    fActive(),
+    fActiveCell()
 {
   if( ! AliPHOSGeometry::GetInstance() )
     AliPHOSGeometry::GetInstance("PHOS", "PHOS");
