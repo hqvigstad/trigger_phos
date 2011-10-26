@@ -64,10 +64,15 @@ void AliPHOSTriggerAnalysis::ProcessEvent(AliPHOSRawReader* rawReader)
 
 	  // Plot Active Values
 	  if( Is2x2Active(readerT, mod, xIdx, zIdx) ){
-	    if( readerLG->IsActive(mod, xIdx, zIdx ) )
+	    if( Is2x2Active(readerLG, mod, xIdx, zIdx ) )
 	      fHistograms->GetLGTSPeakCorrelationA()->Fill(LGmax, TSmax);
-	    if( readerHG->IsActive(mod, xIdx, zIdx ) )
+	    if( Is2x2Active(readerHG, mod, xIdx, zIdx ) )
 	      fHistograms->GetHGTSPeakCorrelationA()->Fill(HGmax, TSmax);
+	    
+	    for(int timeBin = 0; timeBin < kNTRUTimeBins; ++timeBin)
+	      if( Is2x2Active(readerT, mod, xIdx, zIdx, timeBin) ){
+		fHistograms->GetTRUSignalTime()->Fill( timeBin, Get2x2Signal(readerT, fParameters, mod, xIdx, zIdx, timeBin) );
+	      }
 	  }
 
 	} // end zIdx loop
@@ -225,12 +230,29 @@ int AliPHOSTriggerAnalysis::Get4x4Signal(AliPHOSTriggerRawReader* reader, AliPHO
 }
 
 
+bool AliPHOSTriggerAnalysis::Is2x2Active(AliPHOSEMCRawReader* reader, int mod, int xIdx, int zIdx)
+{
+  return reader->IsActive(mod, xIdx*2  , zIdx*2  )
+    ||   reader->IsActive(mod, xIdx*2+1, zIdx*2  )
+    ||   reader->IsActive(mod, xIdx*2  , zIdx*2+1)
+    ||   reader->IsActive(mod, xIdx*2+1, zIdx*2+1);
+}
+
+
 bool AliPHOSTriggerAnalysis::Is2x2Active(AliPHOSTriggerRawReader* reader, int mod, int xIdx, int zIdx)
 {
   const int TRURow = xIdx / kN2x2XPrTRURow;
   const int branch = zIdx / kN2x2ZPrBranch;
 
   return reader->GetTRU(mod, TRURow, branch)->IsActive();
+}
+
+bool AliPHOSTriggerAnalysis::Is2x2Active(AliPHOSTriggerRawReader* reader, int mod, int xIdx, int zIdx, int timeBin)
+{
+  const int TRURow = xIdx / kN2x2XPrTRURow;
+  const int branch = zIdx / kN2x2ZPrBranch;
+
+  return reader->GetTRU(mod, TRURow, branch)->IsActive(timeBin);
 }
 
 

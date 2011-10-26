@@ -88,14 +88,14 @@ void AliPHOSTRURawReader::Reset()
   if( ! fActive )
     return;
 
-  for(int timeBin = 0; timeBin < kNTimeBins; ++timeBin) {
+  for(int timeBin = 0; timeBin < kNTimeBins; ++timeBin) { // loop timeBins
     if( fActiveTime[timeBin] ) {
-      for(int xIdx = 0; xIdx < kN2x2XPrTRURow; ++xIdx) {
+      for(int xIdx = 0; xIdx < kN2x2XPrTRURow; ++xIdx) { // loop 2x2
 	for(int zIdx = 0; zIdx < kN2x2ZPrBranch; ++zIdx) {
 	  fSignals[xIdx][zIdx][timeBin] = kDefaultSignalValue;
 	} // zIdx
       } // xIdx
-      for(int xIdx = 0; xIdx < kN4x4XPrTRURow; ++xIdx) {
+      for(int xIdx = 0; xIdx < kN4x4XPrTRURow; ++xIdx) { // loop 4x4
 	for(int zIdx = 0; zIdx < kN4x4ZPrBranch; ++zIdx) {
 	  fFlags[xIdx][zIdx][timeBin] = false;
 	} // zIdx

@@ -6,6 +6,7 @@
 
 AliPHOSTriggerAnalysisHistograms::AliPHOSTriggerAnalysisHistograms()
   : fTRUActive(0),
+    fTRUSignalTime(0),
     fLGTSPeakCorrelation(0),
     fLGTSPeakCorrelationA(0),
     fHGTSPeakCorrelation(0),
@@ -35,6 +36,16 @@ TH1I* AliPHOSTriggerAnalysisHistograms::GetTRUActive()
     fTRUActive->GetYaxis()->SetTitle("Count");
   }
   return fTRUActive;
+}
+
+TH2I* AliPHOSTriggerAnalysisHistograms::GetTRUSignalTime()
+{
+  if( ! fTRUSignalTime ) {
+    fTRUSignalTime = new TH2I("fTRUSignalTime", "Signal TRU Distribution", kNTRUTimeBins, 0, kNTRUTimeBins,  1024, 0, 1024);
+    fTRUSignalTime->GetXaxis()->SetTitle("Index (mod*nTRURows*nBranches + TRURow*nBranches + branch)");
+    fTRUSignalTime->GetYaxis()->SetTitle("Count");
+  }
+  return fTRUSignalTime;
 }
 
 
@@ -181,6 +192,7 @@ void AliPHOSTriggerAnalysisHistograms::SaveResults(TString fileName, TString opt
   file->cd();
   
   GetTRUActive()->Write();
+  GetTRUSignalTime()->Write();
   GetLGTSPeakCorrelation()->Write();
   GetHGTSPeakCorrelation()->Write();
   GetLGTSPeakCorrelationA()->Write();
