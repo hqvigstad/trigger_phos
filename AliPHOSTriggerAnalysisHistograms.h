@@ -14,6 +14,8 @@ class AliPHOSTriggerAnalysisHistograms
   
   TH1I* GetTRUActive();
   TH2I* GetTRUSignalTime();
+  TH2I* GetLGSignalTime();
+  TH2I* GetHGSignalTime();
   TH2I* GetLGTSPeakCorrelation();
   TH2I* GetLGTSPeakCorrelationA();
   TH2I* GetHGTSPeakCorrelation();
@@ -32,10 +34,13 @@ class AliPHOSTriggerAnalysisHistograms
   const static int kNTRURows = 4;
   const static int kNBranches = 2;
   const static int kNTRUTimeBins = 128;
+  const static int kNEMCTimeBins = 62;
 
  protected:
   TH1I* fTRUActive;
   TH2I* fTRUSignalTime;
+  TH2I* fLGSignalTime;
+  TH2I* fHGSignalTime;
   TH2I* fLGTSPeakCorrelation;
   TH2I* fLGTSPeakCorrelationA;
   TH2I* fHGTSPeakCorrelation;

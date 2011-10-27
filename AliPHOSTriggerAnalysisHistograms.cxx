@@ -7,6 +7,8 @@
 AliPHOSTriggerAnalysisHistograms::AliPHOSTriggerAnalysisHistograms()
   : fTRUActive(0),
     fTRUSignalTime(0),
+    fLGSignalTime(0),
+    fHGSignalTime(0),
     fLGTSPeakCorrelation(0),
     fLGTSPeakCorrelationA(0),
     fHGTSPeakCorrelation(0),
@@ -42,10 +44,32 @@ TH2I* AliPHOSTriggerAnalysisHistograms::GetTRUSignalTime()
 {
   if( ! fTRUSignalTime ) {
     fTRUSignalTime = new TH2I("fTRUSignalTime", "Signal TRU Distribution", kNTRUTimeBins, 0, kNTRUTimeBins,  1024, 0, 1024);
-    fTRUSignalTime->GetXaxis()->SetTitle("Index (mod*nTRURows*nBranches + TRURow*nBranches + branch)");
-    fTRUSignalTime->GetYaxis()->SetTitle("Count");
+    fTRUSignalTime->GetXaxis()->SetTitle("TRU 2x2 Signal");
+    fTRUSignalTime->GetYaxis()->SetTitle("Time");
   }
   return fTRUSignalTime;
+}
+
+
+TH2I* AliPHOSTriggerAnalysisHistograms::GetLGSignalTime()
+{
+  if( ! fLGSignalTime ) {
+    fLGSignalTime = new TH2I("fLGSignalTime", "Signal LG Distribution", kNEMCTimeBins, 0, kNEMCTimeBins,  1024, 0, 1024);
+    fLGSignalTime->GetXaxis()->SetTitle("LG 2x2 Signal");
+    fLGSignalTime->GetYaxis()->SetTitle("Time");
+  }
+  return fLGSignalTime;
+}
+
+
+TH2I* AliPHOSTriggerAnalysisHistograms::GetHGSignalTime()
+{
+  if( ! fHGSignalTime ) {
+    fHGSignalTime = new TH2I("fHGSignalTime", "Signal HG Distribution", kNEMCTimeBins, 0, kNEMCTimeBins,  1024, 0, 1024);
+    fHGSignalTime->GetXaxis()->SetTitle("HG 2x2 Signal");
+    fHGSignalTime->GetYaxis()->SetTitle("Time");
+  }
+  return fHGSignalTime;
 }
 
 
@@ -193,6 +217,8 @@ void AliPHOSTriggerAnalysisHistograms::SaveResults(TString fileName, TString opt
   
   GetTRUActive()->Write();
   GetTRUSignalTime()->Write();
+  GetLGSignalTime()->Write();
+  GetHGSignalTime()->Write();
   GetLGTSPeakCorrelation()->Write();
   GetHGTSPeakCorrelation()->Write();
   GetLGTSPeakCorrelationA()->Write();

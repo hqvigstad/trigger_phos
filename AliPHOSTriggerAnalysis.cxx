@@ -69,6 +69,13 @@ void AliPHOSTriggerAnalysis::ProcessEvent(AliPHOSRawReader* rawReader)
 	    if( Is2x2Active(readerHG, mod, xIdx, zIdx ) )
 	      fHistograms->GetHGTSPeakCorrelationA()->Fill(HGmax, TSmax);
 	    
+	    // LG / HG, signal - time
+	    for(int timeBin = 0; timeBin < kNDefaultNEMCTimeBins; ++timeBin) {
+	      fHistograms->GetLGSignalTime()->Fill( timeBin, Get2x2Signal(readerLG, mod, xIdx, zIdx, timeBin) );
+	      fHistograms->GetHGSignalTime()->Fill( timeBin, Get2x2Signal(readerHG, mod, xIdx, zIdx, timeBin) );
+	    }
+
+	    // TRU, signal - time
 	    for(int timeBin = 0; timeBin < kNTRUTimeBins; ++timeBin)
 	      if( Is2x2Active(readerT, mod, xIdx, zIdx, timeBin) ){
 		fHistograms->GetTRUSignalTime()->Fill( timeBin, Get2x2Signal(readerT, fParameters, mod, xIdx, zIdx, timeBin) );
