@@ -15,6 +15,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <string>
 using namespace std;
 
 void analyseRawChain(TChain* );
@@ -26,7 +27,7 @@ void phosTriggerAnalysis(TString rawFileList = "files.txt")
 {
   TChain *rawChain = new TChain("RAW");
   addFilesToChain(rawFileList, rawChain );
-  
+
   analyseRawChain(rawChain);
 }
 
@@ -38,52 +39,77 @@ void analyseRawChain(TChain* chain)
   AliCDBManager::Instance()->SetDefaultStorage("raw://");
 
   // Create the analysis objects
-  AliPHOSTriggerAnalysis* rawAnalysisCINT7 = 
+  AliPHOSTriggerAnalysis* rawAnalysisCINT7 =
     new AliPHOSTriggerAnalysis();
 
-  AliPHOSTriggerAnalysis* rawAnalysisCPHI7 = 
+  AliPHOSTriggerAnalysis* rawAnalysisCPHI7 =
     new AliPHOSTriggerAnalysis();
 
+  AliPHOSTriggerAnalysis* rawAnalysisAll =
+    new AliPHOSTriggerAnalysis();
+  
   // Read Pedestals
   AliPHOSTriggerParameters* parameters = new AliPHOSTriggerParameters();
   readTRUPedestals(parameters);
   rawAnalysisCINT7->SetTriggerParameters(parameters);
   rawAnalysisCPHI7->SetTriggerParameters(parameters);
-
+  rawAnalysisAll->SetTriggerParameters(parameters);
 
   // Create an AliPHOSRawReader to read the stream
   AliPHOSRawReader* phosRawReader = new AliPHOSRawReader;
-  
+
   // Prepare and loop over the chain
   AliRawReaderChain* rawChain = new AliRawReaderChain(chain);
   rawChain->Reset();
   AliCaloRawStreamV3* phosRawStream = new AliCaloRawStreamV3(rawChain,"PHOS");
   UInt_t runNumber = -1;
   Int_t event_count = 0;
+  Int_t CPHI7_count = 0;
   while (rawChain->NextEvent()) {
-    std::cout << "\revent: " << event_count++ << "  "<< flush;
-    if( rawChain->GetRunNumber() != runNumber ){
-      runNumber = rawChain->GetRunNumber();
-      AliCDBManager::Instance()->SetRun(runNumber);
-      Printf("New run number, current run number is: %d", runNumber);
+    std::cout << "\r" << "event: " << ++event_count 
+	      << "/"<< rawChain->GetNumberOfEvents() << " " << flush;
+    // if( rawChain->GetRunNumber() != runNumber ){
+    //   runNumber = rawChain->GetRunNumber();
+    //   AliCDBManager::Instance()->SetRun(runNumber);
+    //   Printf("New run number, current run number is: %d", runNumber);
+    // }
+    
+    // TString triggers = GetTriggerClass(rawChain);
+
+    // if( triggers.Contains("CPHI7-I-NOPF-ALLNOTRD") ) {
+    //   // Printf(triggers);
+    //   ++CPHI7_count;
+    //   phosRawReader->ReadFromStream( phosRawStream );
+    //   rawAnalysisCPHI7->ProcessEvent(phosRawReader);
+    // }
+
+    // if(triggers.Contains("CINT7") || triggers.Contains("CPHI7")){
+    //   phosRawReader->ReadFromStream( phosRawStream );
+
+    //   if( triggers.Contains("CINT7") )
+    //   	rawAnalysisCINT7->ProcessEvent(phosRawReader);
+    //   if( triggers.Contains("CPHI7") )
+    // 	rawAnalysisCPHI7->ProcessEvent(phosRawReader);
+    // }
+
+    if ( true ) {
+      //Printf(triggers);
+      phosRawReader->ReadFromStream( phosRawStream );
+      rawAnalysisAll->ProcessEvent(phosRawReader);
     }
     
-    TString triggers = GetTriggerClass(rawChain);
-    if(triggers.Contains("CINT7") || triggers.Contains("CPHI7")){
-      phosRawReader->ReadFromStream( phosRawStream );
-      
-      if( triggers.Contains("CINT7") )
-	rawAnalysisCINT7->ProcessEvent(phosRawReader);
-      if( triggers.Contains("CPHI7") )
-	rawAnalysisCPHI7->ProcessEvent(phosRawReader);
-    }
   }
-  
+
   delete phosRawStream;
   delete phosRawReader;
-  
-  rawAnalysisCINT7->SaveResults("triggerResultsCINT7.root");
-  rawAnalysisCPHI7->SaveResults("triggerResultsCPHI7.root");
+
+  cout << endl << "Analysis done." << endl
+       << "Number of CPHI7: " << CPHI7_count << endl
+       << "Saving results" << endl;
+
+  //rawAnalysisCINT7->SaveResults("triggerResultsCINT7.root");
+  //rawAnalysisCPHI7->SaveResults("triggerResultsCPHI7.root");
+  rawAnalysisAll->SaveResults("triggerResultsAll.root");
 }
 
 
@@ -92,12 +118,10 @@ void addFilesToChain(const TString rawFileList, TChain* chain)
 {
   ifstream inList;
   inList.open( rawFileList.Data() );
-  char rawFile[256];
-  while( inList.good() ) {
-    inList >> rawFile;
-    if (rawFile[0] == '!') continue;
-   printf("Add file %s to chain\n",rawFile);
-   chain->Add(rawFile);
+  string line;
+  while( std::getline(inList, line ) ) {
+    printf("Add file %s to chain\n", line.c_str());
+    chain->Add(line.c_str());
  }
   inList.close();
 }
