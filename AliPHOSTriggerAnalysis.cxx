@@ -68,7 +68,7 @@ void AliPHOSTriggerAnalysis::ProcessEvent(AliPHOSRawReader* rawReader)
 	      fHistograms->GetLGTSPeakCorrelationA()->Fill(LGmax, TSmax);
 	    if( Is2x2Active(readerHG, mod, xIdx, zIdx ) )
 	      fHistograms->GetHGTSPeakCorrelationA()->Fill(HGmax, TSmax);
-	    
+
 	    // LG / HG, signal - time
 	    for(int timeBin = 0; timeBin < kNDefaultNEMCTimeBins; ++timeBin) {
 	      fHistograms->GetLGSignalTime()->Fill( timeBin, Get2x2Signal(readerLG, mod, xIdx, zIdx, timeBin) );
@@ -84,6 +84,23 @@ void AliPHOSTriggerAnalysis::ProcessEvent(AliPHOSRawReader* rawReader)
 
 	} // end zIdx loop
       } // end xIdx loop
+      for(int TRURow = 0; TRURow < kNTRURows; ++TRURow) {
+	for(int branch = 0; branch < kNBranches; ++branch) {
+	  AliPHOSTRURawReader* truReader = readerT->GetTRU(mod, TRURow, branch);
+	  if( truReader->IsActive() )
+	    for(int timeBin = 0; timeBin < kNTRUTimeBins; ++timeBin) {
+	      if( truReader->IsActive(timeBin) )
+		for(int xIdx = 0; xIdx < kN2x2XPrTRURow; ++xIdx) {
+		  for(int zIdx = 0; zIdx < kN2x2ZPrBranch; ++zIdx) {
+		    fHistograms->GetTRUSignal(mod, TRURow, branch, xIdx, zIdx)
+		      ->Fill( truReader->GetTriggerSignal(xIdx, zIdx, timeBin) );
+		  } // z
+		} // x
+	    } // timeBin
+	} // branch
+      } // tru
+
+
 
       // Loop over 4x4 cells
       for(int TRURow = 0; TRURow < kNTRURows; ++TRURow) {
@@ -308,7 +325,7 @@ void AliPHOSTriggerAnalysis::SaveResults(TString filename) const
   fHistograms->GetHGTSPeakCorrelation()->DrawCopy("colz");
   new TCanvas;
   fHistograms->GetHGTSPeakCorrelationA()->DrawCopy("colz");
-  
+
   fHistograms->SaveResults(filename);
 }
 

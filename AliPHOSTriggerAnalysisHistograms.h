@@ -13,6 +13,7 @@ class AliPHOSTriggerAnalysisHistograms
   ~AliPHOSTriggerAnalysisHistograms();
   
   TH1I* GetTRUActive();
+  TH1I* GetTRUSignal(int mod, int truRow, int branch, int xIdx, int zIdx);
   TH2I* GetTRUSignalTime();
   TH2I* GetLGSignalTime();
   TH2I* GetHGSignalTime();
@@ -33,11 +34,16 @@ class AliPHOSTriggerAnalysisHistograms
   const static int kNMods = 5;
   const static int kNTRURows = 4;
   const static int kNBranches = 2;
+  const static int kN2x2X = 64/2;
+  const static int kN2x2Z = 56/2;
+  const static int kN2x2XPrTRURow = kN2x2X / kNTRURows;
+  const static int kN2x2ZPrBranch = kN2x2Z / kNBranches;
   const static int kNTRUTimeBins = 128;
   const static int kNEMCTimeBins = 62;
 
  protected:
   TH1I* fTRUActive;
+  TH1I* fTRUSignal[kNMods][kNTRURows][kNBranches][kN2x2XPrTRURow][kN2x2ZPrBranch];
   TH2I* fTRUSignalTime;
   TH2I* fLGSignalTime;
   TH2I* fHGSignalTime;

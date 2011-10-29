@@ -21,6 +21,17 @@ AliPHOSTriggerAnalysisHistograms::AliPHOSTriggerAnalysisHistograms()
     fTriggeredSWHGTSPeakRatio(0),
     fTriggeredSWHGTSPeakCorrelationUS(0)
 {
+  for(int mod = 0; mod < kNMods; ++mod) {
+    for(int truRow = 0; truRow < kNTRURows; ++truRow) {
+      for(int branch = 0; branch < kNBranches; ++branch) {
+	for(int xIdx = 0; xIdx < kN2x2XPrTRURow; ++xIdx) {
+	  for(int zIdx = 0; zIdx < kN2x2ZPrBranch; ++zIdx) {
+	    fTRUSignal[mod][truRow][branch][xIdx][zIdx] = 0;
+	  }
+	}
+      }
+    }
+  }
 }
 
 
@@ -40,12 +51,27 @@ TH1I* AliPHOSTriggerAnalysisHistograms::GetTRUActive()
   return fTRUActive;
 }
 
+
+TH1I* AliPHOSTriggerAnalysisHistograms::GetTRUSignal(int mod, int truRow, int branch, int xIdx, int zIdx)
+{
+  if( ! fTRUSignal[mod][truRow][branch][xIdx][zIdx] )
+    {
+      char name[256];
+      sprintf(name, "fTRUSignal_m%02d_t%02d_b%02d_x%02d_z%02d", mod, truRow, branch, xIdx, zIdx);
+      fTRUSignal[mod][truRow][branch][xIdx][zIdx] = new TH1I(name, name, 1024, 0, 1024);
+      fTRUSignal[mod][truRow][branch][xIdx][zIdx]->GetXaxis()->SetTitle("TRU 2x2 Signal");
+      fTRUSignal[mod][truRow][branch][xIdx][zIdx]->GetYaxis()->SetTitle("Count");
+    }
+  return fTRUSignal[mod][truRow][branch][xIdx][zIdx];
+}
+
+
 TH2I* AliPHOSTriggerAnalysisHistograms::GetTRUSignalTime()
 {
   if( ! fTRUSignalTime ) {
     fTRUSignalTime = new TH2I("fTRUSignalTime", "Signal TRU Distribution", kNTRUTimeBins, 0, kNTRUTimeBins,  1024, 0, 1024);
-    fTRUSignalTime->GetXaxis()->SetTitle("TRU 2x2 Signal");
-    fTRUSignalTime->GetYaxis()->SetTitle("Time");
+    fTRUSignalTime->GetXaxis()->SetTitle("TimeBin");
+    fTRUSignalTime->GetYaxis()->SetTitle("TRU 2x2 Signal");
   }
   return fTRUSignalTime;
 }
@@ -54,9 +80,9 @@ TH2I* AliPHOSTriggerAnalysisHistograms::GetTRUSignalTime()
 TH2I* AliPHOSTriggerAnalysisHistograms::GetLGSignalTime()
 {
   if( ! fLGSignalTime ) {
-    fLGSignalTime = new TH2I("fLGSignalTime", "Signal LG Distribution", kNEMCTimeBins, 0, kNEMCTimeBins,  1024, 0, 1024);
-    fLGSignalTime->GetXaxis()->SetTitle("LG 2x2 Signal");
-    fLGSignalTime->GetYaxis()->SetTitle("Time");
+    fLGSignalTime = new TH2I("fLGSignalTime", "Signal LG Distribution", kNEMCTimeBins, 0, kNEMCTimeBins, 4*1024/4, 0, 4*1024);
+    fLGSignalTime->GetXaxis()->SetTitle("Time");
+    fLGSignalTime->GetYaxis()->SetTitle("LG 2x2 Signal");
   }
   return fLGSignalTime;
 }
@@ -65,9 +91,9 @@ TH2I* AliPHOSTriggerAnalysisHistograms::GetLGSignalTime()
 TH2I* AliPHOSTriggerAnalysisHistograms::GetHGSignalTime()
 {
   if( ! fHGSignalTime ) {
-    fHGSignalTime = new TH2I("fHGSignalTime", "Signal HG Distribution", kNEMCTimeBins, 0, kNEMCTimeBins,  1024, 0, 1024);
-    fHGSignalTime->GetXaxis()->SetTitle("HG 2x2 Signal");
-    fHGSignalTime->GetYaxis()->SetTitle("Time");
+    fHGSignalTime = new TH2I("fHGSignalTime", "Signal HG Distribution", kNEMCTimeBins, 0, kNEMCTimeBins, 4*1024/4, 0, 4*1024);
+    fHGSignalTime->GetXaxis()->SetTitle("Time");
+    fHGSignalTime->GetYaxis()->SetTitle("HG 2x2 Signal");
   }
   return fHGSignalTime;
 }
@@ -230,6 +256,20 @@ void AliPHOSTriggerAnalysisHistograms::SaveResults(TString fileName, TString opt
   GetTriggeredSWHGTSPeakCorrelation()->Write();
   GetTriggeredSWHGTSPeakCorrelationUS()->Write();
   GetTriggeredSWHGTSPeakRatio()->Write();
+
+  // fTRUSignal -> Write
+  for(int mod = 0; mod < kNMods; ++mod) {
+    for(int truRow = 0; truRow < kNTRURows; ++truRow) {
+      for(int branch = 0; branch < kNBranches; ++branch) {
+	for(int xIdx = 0; xIdx < kN2x2XPrTRURow; ++xIdx) {
+	  for(int zIdx = 0; zIdx < kN2x2ZPrBranch; ++zIdx) {
+	    if( fTRUSignal[mod][truRow][branch][xIdx][zIdx] )
+	      fTRUSignal[mod][truRow][branch][xIdx][zIdx]->Write();
+	  }
+	}
+      }
+    }
+  }
 
   file->Close();
 }
