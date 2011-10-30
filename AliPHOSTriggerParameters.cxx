@@ -16,9 +16,9 @@
 /* $Id$ */
 
 ///////////////////////////////////////////////////////////////////////////////
-//                                                                           //
+//.                                                                          //
 // class for PHOS Trigger Parameters                                         //
-//                                                                           //
+//.                                                                          //
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "AliPHOSTriggerParameters.h"
@@ -49,11 +49,11 @@ AliPHOSTriggerParameters::AliPHOSTriggerParameters(const AliPHOSTriggerParameter
 {
   // copy constructor
   
-  for(int mod = 0; mod < kNMods; ++mod) {
-    for(int TRURow = 0; TRURow < kNTRURows; TRURow++) {
-      for(int branch = 0; branch < kNBranches; branch++) {
-	for(int xIdx = 0; xIdx < kNTRUX; xIdx++) {
-	  for(int zIdx = 0; zIdx < kNTRUZ; zIdx++) {
+  for(Int_t mod = 0; mod < kNMods; ++mod) {
+    for(Int_t TRURow = 0; TRURow < kNTRURows; TRURow++) {
+      for(Int_t branch = 0; branch < kNBranches; branch++) {
+	for(Int_t xIdx = 0; xIdx < kNTRUX; xIdx++) {
+	  for(Int_t zIdx = 0; zIdx < kNTRUZ; zIdx++) {
 	    fTRUPedestals[mod][TRURow][branch][xIdx][zIdx] = other.fTRUPedestals[mod][TRURow][branch][xIdx][zIdx];
 	  } // end zIdx
 	} // end xIdx
@@ -81,11 +81,11 @@ AliPHOSTriggerParameters& AliPHOSTriggerParameters::operator= (const AliPHOSTrig
   SetName(other.GetName());
   SetTitle(other.GetTitle());
 
-  for(int mod = 0; mod < kNMods; ++mod) {
-    for(int TRURow = 0; TRURow < kNTRURows; TRURow++) {
-      for(int branch = 0; branch < kNBranches; branch++) {
-	for(int xIdx = 0; xIdx < kNTRUX; xIdx++) {
-	  for(int zIdx = 0; zIdx < kNTRUZ; zIdx++) {
+  for(Int_t mod = 0; mod < kNMods; ++mod) {
+    for(Int_t TRURow = 0; TRURow < kNTRURows; TRURow++) {
+      for(Int_t branch = 0; branch < kNBranches; branch++) {
+	for(Int_t xIdx = 0; xIdx < kNTRUX; xIdx++) {
+	  for(Int_t zIdx = 0; zIdx < kNTRUZ; zIdx++) {
 	    fTRUPedestals[mod][TRURow][branch][xIdx][zIdx] = other.fTRUPedestals[mod][TRURow][branch][xIdx][zIdx];
 	  }
 	}
@@ -97,7 +97,7 @@ AliPHOSTriggerParameters& AliPHOSTriggerParameters::operator= (const AliPHOSTrig
 	fTRUMaskChannel[mod][TRURow][branch] = other.fTRUMaskChannel[mod][TRURow][branch];
       }
     }
-    // for(int tor = 0; tor < kNTORs; tor++) {
+    // for(Int_t tor = 0; tor < kNTORs; tor++) {
     //   fTORMaskArray[mod][tor] = other.fTORMaskArray[mod][tor] ;
     //   fTORReadoutMask[mod][tor] = other.fTORReadoutMask[mod][tor];
     // }
@@ -113,7 +113,7 @@ AliPHOSTriggerParameters::~AliPHOSTriggerParameters()
 
 
 //________________________________________________________________
-UShort_t AliPHOSTriggerParameters::GetTRUPedestal(int mod, int TRURow, int branch, int xIdx, int zIdx) const
+UShort_t AliPHOSTriggerParameters::GetTRUPedestal(Int_t mod, Int_t TRURow, Int_t branch, Int_t xIdx, Int_t zIdx) const
 {
   // Returns the pedestals of the TRU FakeALTRO Trigger signal, is in the range
   // spanned by 10 bits, i.e. [0,1023]. Ideal value is is given by.
@@ -127,7 +127,7 @@ UShort_t AliPHOSTriggerParameters::GetTRUPedestal(int mod, int TRURow, int branc
   return fTRUPedestals[mod][TRURow][branch][xIdx][zIdx];
 }
 //________________________________________________________________
-Bool_t AliPHOSTriggerParameters::GetTRUReadoutOn(int mod, int TRURow, int branch) const
+Bool_t AliPHOSTriggerParameters::GetTRUReadoutOn(Int_t mod, Int_t TRURow, Int_t branch) const
 {
   // Returns the TRU specific flag that specifies for the TRU whether 
   // or not it should be read out.
@@ -139,7 +139,7 @@ Bool_t AliPHOSTriggerParameters::GetTRUReadoutOn(int mod, int TRURow, int branch
   return fTRUTriggerBitReadoutOn[mod][TRURow][branch];
 }
 //________________________________________________________________
-Bool_t AliPHOSTriggerParameters::GetTRUSignalReadoutOn(int mod, int TRURow, int branch) const
+Bool_t AliPHOSTriggerParameters::GetTRUSignalReadoutOn(Int_t mod, Int_t TRURow, Int_t branch) const
 {
   // Returns the TRU specific flag that specifies for the TRU whether 
   // or not it readout should include full  FakeALTRO Trigger Signal.
@@ -151,7 +151,7 @@ Bool_t AliPHOSTriggerParameters::GetTRUSignalReadoutOn(int mod, int TRURow, int 
   return fTRUSignalReadoutOn[mod][TRURow][branch];
 }
 //________________________________________________________________
-UShort_t AliPHOSTriggerParameters::GetTRUSignalTimeBinFrom(int mod, int TRURow, int branch) const
+UShort_t AliPHOSTriggerParameters::GetTRUSignalTimeBinFrom(Int_t mod, Int_t TRURow, Int_t branch) const
 {
   // Returns the TRU specific value that specifies from (including), 
   // which timebin TRU should read out.
@@ -163,7 +163,7 @@ UShort_t AliPHOSTriggerParameters::GetTRUSignalTimeBinFrom(int mod, int TRURow, 
   return fTRUSignalTimeBinFrom[mod][TRURow][branch];
 }
 //________________________________________________________________
-UShort_t AliPHOSTriggerParameters::GetTRUSignalTimeBinTo(int mod, int TRURow, int branch) const
+UShort_t AliPHOSTriggerParameters::GetTRUSignalTimeBinTo(Int_t mod, Int_t TRURow, Int_t branch) const
 {
   // Returns the TRU specific value that specifies to (including), 
   // which timebin TRU should read out.
@@ -175,7 +175,7 @@ UShort_t AliPHOSTriggerParameters::GetTRUSignalTimeBinTo(int mod, int TRURow, in
   return fTRUSignalTimeBinTo[mod][TRURow][branch];
 }
 //________________________________________________________________
-UShort_t AliPHOSTriggerParameters::GetTRUThreshold(int mod, int TRURow, int branch) const
+UShort_t AliPHOSTriggerParameters::GetTRUThreshold(Int_t mod, Int_t TRURow, Int_t branch) const
 {
   // Returns the TRU specific value that specifies the trigger threshold, 
   // the 4x4 Sliding Window (signal - pedestal) value to which the tru 
@@ -188,7 +188,7 @@ UShort_t AliPHOSTriggerParameters::GetTRUThreshold(int mod, int TRURow, int bran
   return fTRUThreshold[mod][TRURow][branch];
 }
 //________________________________________________________________
-UShort_t AliPHOSTriggerParameters::GetTRUMaskChannel(int mod, int TRURow, int branch) const
+UShort_t AliPHOSTriggerParameters::GetTRUMaskChannel(Int_t mod, Int_t TRURow, Int_t branch) const
 {
   // TODO: description
   //
@@ -199,7 +199,7 @@ UShort_t AliPHOSTriggerParameters::GetTRUMaskChannel(int mod, int TRURow, int br
   return fTRUMaskChannel[mod][TRURow][branch];
 }
 //________________________________________________________________
-const UShort_t* AliPHOSTriggerParameters::GetTORMaskArray(int mod, int tor) const
+const UShort_t* AliPHOSTriggerParameters::GetTORMaskArray(Int_t mod, Int_t tor) const
 {
   // TODO: description
   //
@@ -211,7 +211,7 @@ const UShort_t* AliPHOSTriggerParameters::GetTORMaskArray(int mod, int tor) cons
   return fTORMaskArray[mod][tor];
 }
 //________________________________________________________________
-const UShort_t* AliPHOSTriggerParameters::GetTORReadoutMask(int mod, int tor) const
+const UShort_t* AliPHOSTriggerParameters::GetTORReadoutMask(Int_t mod, Int_t tor) const
 {
   // TODO: description
   //
@@ -225,7 +225,7 @@ const UShort_t* AliPHOSTriggerParameters::GetTORReadoutMask(int mod, int tor) co
 
 
 //________________________________________________________________
-void AliPHOSTriggerParameters::SetTRUPedestal(UShort_t pedestal, int mod, int TRURow, int branch, int xIdx, int zIdx)
+void AliPHOSTriggerParameters::SetTRUPedestal(UShort_t pedestal, Int_t mod, Int_t TRURow, Int_t branch, Int_t xIdx, Int_t zIdx)
 {
   // Returns the pedestals of the TRU FakeALTRO Trigger signal, 
   // is in the range spanned by 10 bits
@@ -240,7 +240,7 @@ void AliPHOSTriggerParameters::SetTRUPedestal(UShort_t pedestal, int mod, int TR
   fTRUPedestals[mod][TRURow][branch][xIdx][zIdx] = pedestal;
 }
 //________________________________________________________________
-void AliPHOSTriggerParameters::SetTRUReadoutOn(Bool_t isOn, int mod, int TRURow, int branch)
+void AliPHOSTriggerParameters::SetTRUReadoutOn(Bool_t isOn, Int_t mod, Int_t TRURow, Int_t branch)
 {
   // Returns the TRU specific flag that specifies for the TRU 
   // whether or not it should be read out.
@@ -252,7 +252,7 @@ void AliPHOSTriggerParameters::SetTRUReadoutOn(Bool_t isOn, int mod, int TRURow,
   fTRUTriggerBitReadoutOn[mod][TRURow][branch] = isOn;
 }
 //________________________________________________________________
-void AliPHOSTriggerParameters::SetTRUSignalReadoutOn(Bool_t isOn, int mod, int TRURow, int branch)
+void AliPHOSTriggerParameters::SetTRUSignalReadoutOn(Bool_t isOn, Int_t mod, Int_t TRURow, Int_t branch)
 {
   // Returns the TRU specific flag that specifies for the TRU whether or not it
   // readout should include full FakeALTRO Trigger Signal.
@@ -264,7 +264,7 @@ void AliPHOSTriggerParameters::SetTRUSignalReadoutOn(Bool_t isOn, int mod, int T
    fTRUSignalReadoutOn[mod][TRURow][branch] = isOn;
 }
 //________________________________________________________________
-void AliPHOSTriggerParameters::SetTRUSignalTimeBinFrom(UShort_t fromBin, int mod, int TRURow, int branch)
+void AliPHOSTriggerParameters::SetTRUSignalTimeBinFrom(UShort_t fromBin, Int_t mod, Int_t TRURow, Int_t branch)
 {
   // Returns the TRU specific value that specifies from (including), 
   // which timebin TRU should read out.
@@ -276,7 +276,7 @@ void AliPHOSTriggerParameters::SetTRUSignalTimeBinFrom(UShort_t fromBin, int mod
   fTRUSignalTimeBinFrom[mod][TRURow][branch] = fromBin;
 }
 //________________________________________________________________
-void AliPHOSTriggerParameters::SetTRUSignalTimeBinTo(UShort_t toBin, int mod, int TRURow, int branch)
+void AliPHOSTriggerParameters::SetTRUSignalTimeBinTo(UShort_t toBin, Int_t mod, Int_t TRURow, Int_t branch)
 {
   // Returns the TRU specific value that specifies to (including), 
   // which timebin TRU should read out.
@@ -288,7 +288,7 @@ void AliPHOSTriggerParameters::SetTRUSignalTimeBinTo(UShort_t toBin, int mod, in
   fTRUSignalTimeBinTo[mod][TRURow][branch] = toBin;
 }
 //________________________________________________________________
-void AliPHOSTriggerParameters::SetTRUThreshold(UShort_t threshold, int mod, int TRURow, int branch)
+void AliPHOSTriggerParameters::SetTRUThreshold(UShort_t threshold, Int_t mod, Int_t TRURow, Int_t branch)
 {
   // Returns the TRU specific value that specifies the trigger threshold, 
   // the (signal - pedestal) value to which the tru sends a L0.
@@ -300,7 +300,7 @@ void AliPHOSTriggerParameters::SetTRUThreshold(UShort_t threshold, int mod, int 
   fTRUThreshold[mod][TRURow][branch] = threshold;
 }
 //________________________________________________________________
-void AliPHOSTriggerParameters::SetTRUMaskChannel(UShort_t mask, int mod, int TRURow, int branch)
+void AliPHOSTriggerParameters::SetTRUMaskChannel(UShort_t mask, Int_t mod, Int_t TRURow, Int_t branch)
 {
   // TODO: description
   //
@@ -311,7 +311,7 @@ void AliPHOSTriggerParameters::SetTRUMaskChannel(UShort_t mask, int mod, int TRU
   fTRUMaskChannel[mod][TRURow][branch] = mask;
 }
 //________________________________________________________________
-void AliPHOSTriggerParameters::SetTORMaskArray(const UShort_t ma[3], int mod, int tor)
+void AliPHOSTriggerParameters::SetTORMaskArray(const UShort_t ma[3], Int_t mod, Int_t tor)
 {
   // TODO: description
   //
@@ -323,7 +323,7 @@ void AliPHOSTriggerParameters::SetTORMaskArray(const UShort_t ma[3], int mod, in
   fTORMaskArray[mod][tor][2] = ma[2];
 }
 //________________________________________________________________
-void AliPHOSTriggerParameters::SetTORReadoutMask(const UShort_t rm[2], int mod, int tor)
+void AliPHOSTriggerParameters::SetTORReadoutMask(const UShort_t rm[2], Int_t mod, Int_t tor)
 {
   // TODO: description
   //
@@ -348,23 +348,23 @@ void AliPHOSTriggerParameters::Reset()
 {
   // Resets the values to Null/Ideal
 
-    for(int mod = 0; mod < kNMods; ++mod) {
-    for(int TRURow = 0; TRURow < kNTRURows; TRURow++) {
-      for(int branch = 0; branch < kNBranches; branch++) {
+    for(Int_t mod = 0; mod < kNMods; ++mod) {
+    for(Int_t TRURow = 0; TRURow < kNTRURows; TRURow++) {
+      for(Int_t branch = 0; branch < kNBranches; branch++) {
 	fTRUTriggerBitReadoutOn[mod][TRURow][branch] = 0;
 	fTRUSignalReadoutOn[mod][TRURow][branch] = 0;
 	fTRUSignalTimeBinFrom[mod][TRURow][branch] = 0;
 	fTRUSignalTimeBinTo[mod][TRURow][branch] = kDefaultNTRUTimeBins-1;
 	fTRUThreshold[mod][TRURow][branch] = 0;
 	fTRUMaskChannel[mod][TRURow][branch] = 0;
-	for(int xIdx = 0; xIdx < kNTRUX; xIdx++) {
-	  for(int zIdx = 0; zIdx < kNTRUZ; zIdx++) {
+	for(Int_t xIdx = 0; xIdx < kNTRUX; xIdx++) {
+	  for(Int_t zIdx = 0; zIdx < kNTRUZ; zIdx++) {
 	    fTRUPedestals[mod][TRURow][branch][xIdx][zIdx] = kIdealTRUPedestal;
 	  }
 	}
       }
     }
-    for(int tor = 0; tor < kNTORs; tor++) {
+    for(Int_t tor = 0; tor < kNTORs; tor++) {
       fTORMaskArray[mod][tor][0] = 0;
       fTORMaskArray[mod][tor][1] = 0;
       fTORMaskArray[mod][tor][2] = 0;
