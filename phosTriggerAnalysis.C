@@ -97,7 +97,6 @@ void analyseRawChain(TChain* chain)
       phosRawReader->ReadFromStream( phosRawStream );
       rawAnalysisAll->ProcessEvent(phosRawReader);
     }
-    
   }
 
   delete phosRawStream;
@@ -107,8 +106,8 @@ void analyseRawChain(TChain* chain)
        << "Number of CPHI7: " << CPHI7_count << endl
        << "Saving results" << endl;
 
-  //rawAnalysisCINT7->SaveResults("triggerResultsCINT7.root");
-  //rawAnalysisCPHI7->SaveResults("triggerResultsCPHI7.root");
+  // rawAnalysisCINT7->SaveResults("triggerResultsCINT7.root");
+  // rawAnalysisCPHI7->SaveResults("triggerResultsCPHI7.root");
   rawAnalysisAll->SaveResults("triggerResultsAll.root");
 }
 

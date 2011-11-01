@@ -2,6 +2,7 @@
 #define ALIPHOSTRIGGERANALYSISHISTOGRAMS_H
 
 #include "TString.h"
+class TFile;
 class TH1I;
 class TH2I;
 
@@ -10,6 +11,7 @@ class AliPHOSTriggerAnalysisHistograms
 {
  public:
   AliPHOSTriggerAnalysisHistograms();
+  AliPHOSTriggerAnalysisHistograms(TString fileName);
   ~AliPHOSTriggerAnalysisHistograms();
   
   TH1I* GetTRUActive();
@@ -28,6 +30,8 @@ class AliPHOSTriggerAnalysisHistograms
   TH2I* GetTriggeredSWHGTSPeakCorrelation();
   TH2I* GetTriggeredSWHGTSPeakCorrelationUS();
   TH2I* GetTriggeredSWHGTSPeakRatio();
+
+  bool IsInitTRUSignal(int mod, int truRow, int branch, int xIdx, int zIdx) {return fTRUSignal[mod][truRow][branch][xIdx][zIdx];}
   
   void SaveResults(TString filename, TString options = "RECREATE");
 
@@ -42,6 +46,8 @@ class AliPHOSTriggerAnalysisHistograms
   const static int kNEMCTimeBins = 62;
 
  protected:
+  TFile* fFile;
+
   TH1I* fTRUActive;
   TH1I* fTRUSignal[kNMods][kNTRURows][kNBranches][kN2x2XPrTRURow][kN2x2ZPrBranch];
   TH2I* fTRUSignalTime;

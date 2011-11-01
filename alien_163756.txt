@@ -1,0 +1,6 @@
+alien:///alice/data/2011/LHC11f_PHOS/000163756/raw/11000163756003.10.root
+alien:///alice/data/2011/LHC11f_PHOS/000163756/raw/11000163756003.11.root
+alien:///alice/data/2011/LHC11f_PHOS/000163756/raw/11000163756003.12.root
+alien:///alice/data/2011/LHC11f_PHOS/000163756/raw/11000163756003.13.root
+alien:///alice/data/2011/LHC11f_PHOS/000163756/raw/11000163756003.14.root
+alien:///alice/data/2011/LHC11f_PHOS/000163756/raw/11000163756003.15.root

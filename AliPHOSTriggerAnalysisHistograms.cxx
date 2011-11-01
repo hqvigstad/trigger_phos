@@ -3,9 +3,11 @@
 #include "TH1I.h"
 #include "TH2I.h"
 #include "TFile.h"
+#include "TString.h"
 
 AliPHOSTriggerAnalysisHistograms::AliPHOSTriggerAnalysisHistograms()
-  : fTRUActive(0),
+  : fFile(0),
+    fTRUActive(0),
     fTRUSignalTime(0),
     fLGSignalTime(0),
     fHGSignalTime(0),
@@ -35,8 +37,44 @@ AliPHOSTriggerAnalysisHistograms::AliPHOSTriggerAnalysisHistograms()
 }
 
 
+AliPHOSTriggerAnalysisHistograms::AliPHOSTriggerAnalysisHistograms(TString fileName)
+{
+  fFile = new TFile(fileName, "READ");
+  
+  fFile->GetObject("fTRUActive", fTRUActive);
+  fFile->GetObject("fTRUSignalTime", fTRUSignalTime);
+  fFile->GetObject("fLGSignalTime", fLGSignalTime);
+  fFile->GetObject("fHGSignalTime", fHGSignalTime);
+  fFile->GetObject("fLGTSPeakCorrelation", fLGTSPeakCorrelation);
+  fFile->GetObject("fLGTSPeakCorrelationA", fLGTSPeakCorrelationA);
+  fFile->GetObject("fHGTSPeakRatio", fHGTSPeakRatio);
+  fFile->GetObject("fHGTSPeakCorrelationUS", fHGTSPeakCorrelationUS);
+  fFile->GetObject("fTriggerTime", fTriggerTime);
+  fFile->GetObject("fTriggeredSWLGTSPeakCorrelation", fTriggeredSWLGTSPeakCorrelation);
+  fFile->GetObject("fTriggeredSWHGTSPeakCorrelation", fTriggeredSWHGTSPeakCorrelation);
+  fFile->GetObject("fTriggeredSWHGTSPeakRatio", fTriggeredSWHGTSPeakRatio);
+  fFile->GetObject("fTriggeredSWHGTSPeakCorrelationUS", fTriggeredSWHGTSPeakCorrelationUS);
+  
+  for(int mod = 0; mod < kNMods; ++mod) {
+    for(int truRow = 0; truRow < kNTRURows; ++truRow) {
+      for(int branch = 0; branch < kNBranches; ++branch) {
+	for(int xIdx = 0; xIdx < kN2x2XPrTRURow; ++xIdx) {
+	  for(int zIdx = 0; zIdx < kN2x2ZPrBranch; ++zIdx) {
+	    char name[256];
+	    sprintf(name, "fTRUSignal_m%02d_t%02d_b%02d_x%02d_z%02d", mod, truRow, branch, xIdx, zIdx);
+	    fFile->GetObject(name, fTRUSignal[mod][truRow][branch][xIdx][zIdx]);
+	  }
+	}
+      }
+    }
+  }
+
+}
+
+
 AliPHOSTriggerAnalysisHistograms::~AliPHOSTriggerAnalysisHistograms()
 {
+  delete fFile;
 }
 
 

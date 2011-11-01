@@ -116,7 +116,7 @@ AliPHOSTriggerParameters::~AliPHOSTriggerParameters()
 UShort_t AliPHOSTriggerParameters::GetTRUPedestal(Int_t mod, Int_t TRURow, Int_t branch, Int_t xIdx, Int_t zIdx) const
 {
   // Returns the pedestals of the TRU FakeALTRO Trigger signal, is in the range
-  // spanned by 10 bits, i.e. [0,1023]. Ideal value is is given by.
+  // spanned by 10 bits, i.e. [0,1023]. Ideal value is is given by member kIdealTRUPedestal.
   //
   // mod: [0,4], module index, clockwise, as of 2011 only 2:4 exists
   // TRURow: [0,3], TRU Row, indexed in rising number in PHOS x direction
