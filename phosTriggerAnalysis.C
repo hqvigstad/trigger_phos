@@ -67,21 +67,21 @@ void analyseRawChain(TChain* chain)
   Int_t CPHI7_count = 0;
   while (rawChain->NextEvent()) {
     std::cout << "\r" << "event: " << ++event_count 
-	      << "/"<< rawChain->GetNumberOfEvents() << " " << flush;
-    // if( rawChain->GetRunNumber() != runNumber ){
-    //   runNumber = rawChain->GetRunNumber();
-    //   AliCDBManager::Instance()->SetRun(runNumber);
-    //   Printf("New run number, current run number is: %d", runNumber);
-    // }
+    	      << "/"<< rawChain->GetNumberOfEvents() << " " << flush;
+    if( rawChain->GetRunNumber() != runNumber ){
+      runNumber = rawChain->GetRunNumber();
+      AliCDBManager::Instance()->SetRun(runNumber);
+      Printf("New run number, current run number is: %d", runNumber);
+    }
     
-    // TString triggers = GetTriggerClass(rawChain);
+    TString triggers = GetTriggerClass(rawChain);
 
-    // if( triggers.Contains("CPHI7-I-NOPF-ALLNOTRD") ) {
-    //   // Printf(triggers);
-    //   ++CPHI7_count;
-    //   phosRawReader->ReadFromStream( phosRawStream );
-    //   rawAnalysisCPHI7->ProcessEvent(phosRawReader);
-    // }
+    if( triggers.Contains("CPHI7-I-NOPF-ALLNOTRD") ) {
+      // Printf(triggers);
+      ++CPHI7_count;
+      phosRawReader->ReadFromStream( phosRawStream );
+      rawAnalysisCPHI7->ProcessEvent(phosRawReader);
+    }
 
     // if(triggers.Contains("CINT7") || triggers.Contains("CPHI7")){
     //   phosRawReader->ReadFromStream( phosRawStream );
@@ -92,13 +92,13 @@ void analyseRawChain(TChain* chain)
     // 	rawAnalysisCPHI7->ProcessEvent(phosRawReader);
     // }
 
-    if ( true ) {
-      //Printf(triggers);
-      phosRawReader->ReadFromStream( phosRawStream );
-      rawAnalysisAll->ProcessEvent(phosRawReader);
-    }
+    // if ( true ) {
+    //   //Printf(triggers);
+    //   phosRawReader->ReadFromStream( phosRawStream );
+    //   rawAnalysisAll->ProcessEvent(phosRawReader);
+    // }
   }
-
+  
   delete phosRawStream;
   delete phosRawReader;
 
@@ -107,8 +107,8 @@ void analyseRawChain(TChain* chain)
        << "Saving results" << endl;
 
   // rawAnalysisCINT7->SaveResults("triggerResultsCINT7.root");
-  // rawAnalysisCPHI7->SaveResults("triggerResultsCPHI7.root");
-  rawAnalysisAll->SaveResults("triggerResultsAll.root");
+  rawAnalysisCPHI7->SaveResults("triggerResultsCPHI7.root");
+  //rawAnalysisAll->SaveResults("triggerResultsAll.root");
 }
 
 

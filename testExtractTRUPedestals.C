@@ -1,4 +1,4 @@
-void testExtractTRUPedestals()
+void testExtractTRUPedestals(TString fileName = "triggerResultsAll.root")
 {
   gROOT->LoadMacro("AliPHOSTriggerAnalysisHistograms.cxx+g");
   gROOT->LoadMacro("AliPHOSTriggerParameters.cxx+g");
@@ -6,9 +6,9 @@ void testExtractTRUPedestals()
   gROOT->LoadMacro("extractTRUPedestals.C+g");
   gROOT->LoadMacro("readTRUPedestals.C+g");
   
-  gStyle->SetOptStat(10);
+  
  
   AliPHOSTriggerParameters* parameters = new AliPHOSTriggerParameters();
-  extractTRUPedestals("triggerResultsAll.root", false, parameters);
+  extractTRUPedestals(fileName, true, parameters);
   drawTRUPedestals(parameters);
 }
