@@ -16,7 +16,7 @@ void readTRUPedestals(AliPHOSTriggerParameters* parameters)
       for (Int_t branch = 0; branch < 2; branch++) { // branch
 	
 	// Open the Appropriate pedestal file
-	TString fileName("pedestal_m");
+	TString fileName("pdats/pedestal_m");
 	fileName = fileName += mod;
 	fileName+="_r";
 	fileName+=tru;
