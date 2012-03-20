@@ -45,11 +45,11 @@ void AliPHOSEMCRawReader::ReadFromStream(AliCaloRawStreamV3* rawStream)
     Int_t rowx = rawStream->GetCellX();
     Int_t colz = rawStream->GetCellZ();
     UInt_t value = rawStream->GetAltroCFG1();
-    Short_t offset=0,threshold=0;
+    Short_t offset=0;//,threshold=0;
     Bool_t ZeroSuppressionEnabled = (value >> 15) & 0x1;
     if(ZeroSuppressionEnabled) {
       offset = (value >> 10) & 0xf;
-      threshold = value & 0x3ff;
+      //threshold = value & 0x3ff;
     }
     //Int_t timeBin = rawStream->GetHWAddress() & 0x7f;
 
