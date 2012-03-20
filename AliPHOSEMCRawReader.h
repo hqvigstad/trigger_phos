@@ -1,7 +1,7 @@
 #ifndef ALIPHOSEMCRAWREADER_H
 #define ALIPHOSEMCRAWREADER_H
 
-class AliCaloRawStreamV3;
+#include "AliCaloRawStreamV3.h";
 
 #include <vector>
 using namespace std;
