@@ -18,9 +18,9 @@ set(LIBS ${LIBS} ${ALIROOT_LIBRARIES})
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-long-long -pedantic -Woverloaded-virtual -Weffc++ -Wctor-dtor-privacy -std=c++0x")
 
 # clang
-set(CMAKE_C_COMPILER clang)
-set(CMAKE_CXX_COMPILER clang++)
-set(CMAKE_CXX_FLAGS -Weverything)
+#set(CMAKE_C_COMPILER clang)
+#set(CMAKE_CXX_COMPILER clang++)
+#set(CMAKE_CXX_FLAGS -Weverything)
 
 add_library(libTrigger 
 		       AliTRUPedestalAnalysis.cxx  
