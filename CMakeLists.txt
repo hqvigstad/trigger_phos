@@ -23,8 +23,6 @@ set(CMAKE_CXX_COMPILER clang++)
 set(CMAKE_CXX_FLAGS -Weverything)
 
 add_library(libTrigger 
-		       AliPHOSEMCRawReader.cxx  
-		       AliPHOSRawReader.cxx  
-		       AliPHOSTriggerAnalysis.cxx  
-		       AliPHOSTriggerAnalysisHistograms.cxx
+		       AliTRUPedestalAnalysis.cxx  
+		       AliTRUPedestalOutput.cxx
 		       )
