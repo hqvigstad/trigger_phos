@@ -18,7 +18,7 @@ void truPedestalAnalysis(TString rawFileList = "files.txt", TString saveToFile =
 {
   // Raw Chain Initialization
   TChain *chain = new TChain("RAW");
-  addFilesToChain(rawFileList, rawChain );
+  addFilesToChain(rawFileList, chain );
   AliRawReaderChain* rawChain = new AliRawReaderChain(chain);
   rawChain->Reset();
 
@@ -29,10 +29,12 @@ void truPedestalAnalysis(TString rawFileList = "files.txt", TString saveToFile =
   AliTRUPedestalAnalysis* anaObj = new AliTRUPedestalAnalysis();
 
   // Loop over events in Chain
+  UInt_t runNumber = -1;
+  Int_t event_count = 0;
   while (rawChain->NextEvent())
   { // Print out event number:
     std::cout << "\r" << "event: " << ++event_count
-  	      << "/"<< rawChain->GetNumberOfEvents() << " " << flush;
+  	      << "/"<< rawChain->GetNumberOfEvents() << " " << std::flush;
     if( rawChain->GetRunNumber() != runNumber ){
       // if new event number, update OCDB
       runNumber = rawChain->GetRunNumber();
@@ -41,11 +43,17 @@ void truPedestalAnalysis(TString rawFileList = "files.txt", TString saveToFile =
     }
 
     // Process Event using analysis Object
-    anaObj->ProcessEvent;
+    anaObj->ProcessEvent(phosRawStream);
   }
 
   // Save output to file, in form of single entry in tree
-  saveResults(anaObj->GetOutput(), TString saveToFile);
+  saveResults(anaObj->GetOutput(), saveToFile);
+
+  // cleanup
+  delete anaObj;
+  delete phosRawStream;
+  delete rawChain;
+  delete chain;
 }
 
 void addFilesToChain(const TString rawFileList, TChain* chain)
@@ -53,7 +61,7 @@ void addFilesToChain(const TString rawFileList, TChain* chain)
   // Open rawFileList and add files contained to chain
   std::ifstream inList;
   inList.open( rawFileList.Data() );
-  string line;
+  std::string line;
   while( std::getline(inList, line ) ) {
     printf("Add file %s to chain\n", line.c_str());
     chain->Add(line.c_str());
