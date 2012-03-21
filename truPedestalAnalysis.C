@@ -1,3 +1,4 @@
+#include "TROOT.h"
 #include "TChain.h"
 #include "TString.h"
 #include "AliRawReaderChain.h"
@@ -71,5 +72,15 @@ void addFilesToChain(const TString rawFileList, TChain* chain)
 
 void saveResults(AliTRUPedestalOutput* output, TString saveToFile)
 {
-  return;
+  if( ! output )
+    gROOT->Error("truPedestalAnalysis.C::saveResults: no ouput", "no msgfmt");
+
+  TTree* tree = new TTree("pedestalTree", "Pedestal Analysis Tree");
+  TBranch* branch = tree->Branch("pedOutput", &output);
+
+  Printf("Filling:");
+  branch->Print();;
+  tree->Fill();
+
+  tree->SaveAs(saveToFile);
 }
