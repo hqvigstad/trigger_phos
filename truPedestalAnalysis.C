@@ -1,9 +1,67 @@
 #include "TChain.h"
+#include "TString.h"
+#include "AliRawReaderChain.h"
+#include "AliCaloRawStreamV3.h"
+#include "AliCDBManager.h"
 
-void truPedestalAnalysis(TString rawFileList = "files.txt")
+#include <fstream>
+#include <iostream>
+
+#include "AliTRUPedestalAnalysis.h"
+#include "AliTRUPedestalOutput.h"
+
+void addFilesToChain(const TString rawFileList, TChain* chain);
+void saveResults(AliTRUPedestalOutput* output, TString saveToFile);
+
+
+void truPedestalAnalysis(TString rawFileList = "files.txt", TString saveToFile = "truOutput.root")
 {
-  TChain *rawChain = new TChain("RAW");
+  // Raw Chain Initialization
+  TChain *chain = new TChain("RAW");
   addFilesToChain(rawFileList, rawChain );
+  AliRawReaderChain* rawChain = new AliRawReaderChain(chain);
+  rawChain->Reset();
 
+  // PHOS Raw Stream Initialization
+  AliCaloRawStreamV3* phosRawStream = new AliCaloRawStreamV3(rawChain,"PHOS");
+
+  // Analysis object Initialization
   AliTRUPedestalAnalysis* anaObj = new AliTRUPedestalAnalysis();
+
+  // Loop over events in Chain
+  while (rawChain->NextEvent())
+  { // Print out event number:
+    std::cout << "\r" << "event: " << ++event_count
+  	      << "/"<< rawChain->GetNumberOfEvents() << " " << flush;
+    if( rawChain->GetRunNumber() != runNumber ){
+      // if new event number, update OCDB
+      runNumber = rawChain->GetRunNumber();
+      AliCDBManager::Instance()->SetRun(runNumber);
+      Printf("New run number, current run number is: %d", runNumber);
+    }
+
+    // Process Event using analysis Object
+    anaObj->ProcessEvent;
+  }
+
+  // Save output to file, in form of single entry in tree
+  saveResults(anaObj->GetOutput(), TString saveToFile);
+}
+
+void addFilesToChain(const TString rawFileList, TChain* chain)
+{
+  // Open rawFileList and add files contained to chain
+  std::ifstream inList;
+  inList.open( rawFileList.Data() );
+  string line;
+  while( std::getline(inList, line ) ) {
+    printf("Add file %s to chain\n", line.c_str());
+    chain->Add(line.c_str());
+ }
+  inList.close();
+}
+
+void saveResults(AliTRUPedestalOutput* output, TString saveToFile)
+{
+  return;
 }
