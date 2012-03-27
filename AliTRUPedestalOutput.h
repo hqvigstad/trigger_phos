@@ -25,10 +25,15 @@ public:
   void SetRun(Int_t run);
   void EventAdded();
 
+  UInt_t GetEventsAdded() { return fNEvents; }
+
   // Histograms Getters:
   TH1F* GetPedestals();
-  TH2F* GetPedestals2d();
-  TH2F* GetPedestalsId();
+  TH1F* GetPedestalRMS();
+  TH1I* GetPedestalSamples();
+  TH2F* GetPedestals2d(UInt_t mod);
+  TH2F* GetPedestalRMS2d(UInt_t mod);
+  TH1F* GetPedestalsId();
   TH1F* GetPedestals_branch(UInt_t mod, UInt_t row, UInt_t branch);
 
   TH1I* GetTRUSignals(UInt_t mod, UInt_t row, UInt_t branch, UInt_t x, UInt_t z);
@@ -37,6 +42,7 @@ public:
   Double_t GetPedestal(UInt_t mod, UInt_t row, UInt_t branch, UInt_t x, UInt_t z);
   Double_t GetPedestalError(UInt_t mod, UInt_t row, UInt_t branch, UInt_t x, UInt_t z);
   Double_t GetRMS(UInt_t mod, UInt_t row, UInt_t branch, UInt_t x, UInt_t z);
+  Double_t GetSamples(UInt_t mod, UInt_t row, UInt_t branch, UInt_t x, UInt_t z);
   
   // Constants
   const static UInt_t kNMods         = 5;
@@ -58,13 +64,16 @@ private:
   
   // Event Global Histograms:
   TH1F* fPedestals;   //! Pedestals
-  TH2F* fPedestals2d;
-  TH2F* fPedestalsId; //! Pedestals v Id
+  TH1F* fPedestalRMS; //!
+  TH1I* fPedestalSamples; //!
+  TH2F* fPedestals2d[kNMods]; //!
+  TH2F* fPedestalRMS2d[kNMods]; //!
+  TH1F* fPedestalsId; //! Pedestals v Id
   TH1F* fPedestals_branch[kNMods][kNTRURows][kNBranches]; //! Pedestals, pr mod
   // TH2F* fPedestalsId_branch[kNMods][kNTRURows][kNBranches]; //! Pedestals v Id, pr mod
 
   // Regular Histograms
-  TH1I* fTRUSignals[kNMods][kNTRURows][kNBranches][kN2x2XPrTRURow][kN2x2ZPrBranch];
+  TH1I* fTRUSignals[kNMods][kNTRURows][kNBranches][kN2x2XPrTRURow][kN2x2ZPrBranch]; //->
 
   
   ClassDef(AliTRUPedestalOutput, 0)
